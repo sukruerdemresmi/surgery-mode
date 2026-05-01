@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerrahi Katalog | Surgery-Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* TEMEL AYARLAR */
+        * { margin: 0; padding: 0; box-sizing: border-box; text-decoration: none; -webkit-font-smoothing: antialiased; }
+        body, html { height: 100%; width: 100%; font-family: 'Inter', sans-serif; background: #0f172a; color: white; overflow-x: hidden; }
+        
+        /* ÜST NAVİGASYON (Header) */
+        .top-header {
+            width: 100%;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .home-btn {
+            background: #38bdf8;
+            color: #0f172a;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.75rem;
+            transition: 0.3s;
+            letter-spacing: 0.5px;
+            margin-right: auto; /* Butonu en sola iter */
+        }
+
+        .home-btn:hover { background: #fff; transform: scale(1.05); }
+
+        .header-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        /* ARAMA BÖLÜMÜ */
+        .search-section {
+            width: 100%;
+            padding: 40px 20px 20px 20px;
+            text-align: center;
+        }
+
+        .search-container { max-width: 550px; margin: 0 auto; }
+        .search-input-wrapper { 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 2px solid #38bdf8; 
+            border-radius: 18px; 
+            padding: 14px 20px; 
+            display: flex; 
+            align-items: center; 
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); 
+        }
+        .search-input-wrapper input { 
+            background: transparent; 
+            border: none; 
+            color: white; 
+            width: 100%; 
+            outline: none; 
+            font-size: 1.1rem; 
+            font-family: inherit; 
+        }
+
+        /* ANA DÜZEN */
+        .main-layout { max-width: 1200px; margin: 0 auto; padding: 0 20px 140px 20px; }
+        .grid-title { margin: 30px 0 20px 0; font-weight: 800; font-size: 1.1rem; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .grid-title::after { content: ""; flex: 1; height: 1px; background: rgba(56, 189, 248, 0.2); }
+
+        /* KATEGORİ KARTLARI */
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .category-card { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 25px; border-radius: 25px; display: flex; align-items: center; justify-content: center; transition: 0.3s; cursor: pointer; text-align: center; }
+        .category-card:hover { background: rgba(56, 189, 248, 0.12); transform: translateY(-5px); border-color: #38bdf8; }
+        .category-card h2 { font-size: 1.1rem; font-weight: 700; color: #f8fafc; }
+
+        /* ARAMA SONUÇLARI */
+        #searchWrapper { display: none; }
+        .search-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+        .product-result-card { background: rgba(255, 255, 255, 0.03); border: 1px solid #38bdf8; padding: 20px; border-radius: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .product-result-card:hover { background: rgba(56, 189, 248, 0.2); }
+        .product-result-card h3 { font-size: 0.85rem; font-weight: 600; color: #fff; }
+
+        /* 900PX POP-UP */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        .modal-content { background: #1e293b; border: 1px solid rgba(255,255,255,0.2); width: 100%; max-width: 900px; max-height: 90vh; border-radius: 40px; padding: 45px; text-align: center; position: relative; overflow-y: auto; }
+        .modal-content img { width: 100%; max-width: 750px; background: white; border-radius: 25px; padding: 20px; margin-bottom: 30px; max-height: 450px; object-fit: contain; }
+        .modal-content h2 { color: #38bdf8; font-size: 1.8rem; margin-bottom: 20px; font-weight: 800; text-transform: uppercase; }
+        .modal-content p { color: #e2e8f0; font-size: 1.1rem; line-height: 1.8; text-align: left; background: rgba(15, 23, 42, 0.6); padding: 30px; border-radius: 25px; }
+        .close-btn { margin-top: 35px; padding: 15px 60px; background: #fff; color: #000; border-radius: 100px; font-weight: 900; cursor: pointer; transition: 0.3s; }
+
+        /* FOOTER */
+        .nt-footer { position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.9); padding: 15px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
+        .mini-logo { width: 38px; height: 38px; background: #fff; border-radius: 10px; color: #000; display: flex; justify-content: center; align-items: center; font-weight: 800; }
+        
+        @media (max-width: 600px) { .header-title { display: none; } }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <a href="index.html" class="home-btn">ANA SAYFA</a>
+        <div class="header-title">CERRAHİ ENSTRÜMANTASYON</div>
+        <div style="width: 80px;"></div> </header>
+
+    <div class="search-section">
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <input type="text" id="masterSearch" placeholder="Hızlı alet ara..." onkeyup="executeSearch()">
+            </div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <div id="categoryContainer">
+            <div class="grid-title">KATEGORİLER</div>
+            <div class="category-grid">
+                <a href="1-bisturiler.html" class="category-card"><h2>1-BİSTÜRİLER</h2></a>
+                <a href="2-pensetler.html" class="category-card"><h2>2-PENSETLER</h2></a>
+                <a href="3-makaslar.html" class="category-card"><h2>3-MAKASLAR</h2></a>
+                <a href="4-klempler.html" class="category-card"><h2>4-KLEMPLER</h2></a>
+                <a href="5-portegu.html" class="category-card"><h2>5-PORTEGÜLER</h2></a>
+                <a href="6-ekartor-manuel.html" class="category-card"><h2>6-EKARTOR MANUEL</h2></a>
+                <a href="7-ekartor-otomatik.html" class="category-card"><h2>7-EKARTOR OTOMATİK</h2></a>
+                <a href="8-ekartor-sabitlenen.html" class="category-card"><h2>8-EKARTOR SABİTLENEN</h2></a>
+                <a href="9-aspiratorler.html" class="category-card"><h2>9-ASPİRATORLER</h2></a>
+                <a href="10-ozel-aletler.html" class="category-card"><h2>10-ÖZEL ALETLER</h2></a>
+            </div>
+        </div>
+
+        <div id="searchWrapper">
+            <div class="grid-title" id="searchHeader">SONUÇLAR</div>
+            <div id="searchResults" class="search-grid"></div>
+        </div>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modalImg" src="" alt="">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDesc"></p>
+            <div class="close-btn" onclick="closeModal()">KAPAT</div>
+        </div>
+    </div>
+
+    <div class="nt-footer">
+        <div class="mini-logo">NT</div>
+        <p style="font-size:0.55rem; color:#888; margin-top:5px;">Şükrü ERDEM © 2026</p>
+    </div>
+
+    <script>
+        // SENİN HAZIRLADIĞIN VERİ LİSTESİ BURAYA GELECEK
+        const instrumentsDatabase = [
+            { name: "3 Numara Uzun (3L)", img: "3numarauzun.jpg", desc: "3L beden; 10, 11, 12 ve 15 numaralı bıçak boyutlarına uygundur. 21,5 cm uzunluğundadır." },
+            { name: "3 Numara Yan (Açılı)", img: "3numarayan.jpg", desc: "3LA boyutu; 10, 11, 12 ve 15 mm bıçak boyutlarına uygundur. Derin kavitelerde manevra sağlar." },
+            { name: "4 Numara Bistüri Sapı", img: "4numara.jpg", desc: "4 numara sap; 20, 21, 22, 23, 24 ve 25 mm bıçak çaplarına uygundur." },
+            { name: "4 Numara Uzun (4L)", img: "4numarauzun.jpg", desc: "4L beden; 20, 21, 22, 23, 24 ve 25 mm bıçak boyutlarına uygundur. 21,5 cm uzunluğundadır." },
+            { name: "7 Numara Bistüri Sapı", img: "7numara.jpg", desc: "7 numara sap; 10, 11, 12 ve 15 numara bıçaklara uygundur. İnce ve uzun gövdelidir." },
+            { name: "9 Numara Bistüri Sapı", img: "9Numara.jpg", desc: "9 numara sap; 10, 11, 12 ve 15 numara bıçaklara uygundur. Narin işler için kısadır." },
+            { name: "Beaver Bıçak Sapı", img: "beaverbicaksapi.jpg", desc: "#3KM: 7,5 cm | #3K: 10,5 cm | #3KL: 15 cm seçenekleri mevcuttur. Mikrocerrahi ve KBB için idealdir." },
+            { name: "Greft Bıçağı Sapı", img: "greftbicaksapi.jpg", desc: "18,5 cm uzunluğundadır. Sadece saptır. Deri grefti alımları için kullanılır." },
+            { name: "Laringeal Bisturi Sapı", img: "laringealsap.jpg", desc: "11 inç (28 cm) uzunluğunda özel laringeal bölge sapıdır. Derin boğaz müdahaleleri içindir." },
+            { name: "Wecprep Bıçakları", img: "wecprepbicak.jpg", desc: "2-1/4 inç (5,5 cm) uzunluğundadır. Tek kenarlı karbon çelik bıçak yapısına sahiptir." },
+            { name: "Adams Doku Penseti", img: "adamsdokupenseti.jpg", desc: "Plastik cerrahi ve KBB operasyonlarında kullanılan, narin uçlu ve 1x2 dişli penset." },
+            { name: "Bayonet Dişsiz Penset", img: "bayonetdissizpenseti.jpg", desc: "Beyin cerrahisi ve KBB operasyonlarında derin kavitelerde mükemmel görüş alanı sağlar." },
+            { name: "Bonney Doku Penseti", img: "bonneydokupenseti.jpg", desc: "Ortopedik ve jinekolojik cerrahide kullanılan güçlü, dişli yapılı ağır doku penseti." },
+            { name: "Brigham Pansuman Penseti", img: "brighampansumanpenseti.jpg", desc: "Geniş ve tırtıklı tutma yüzeyine sahip, deri kapatma ve yoğun pansuman için ideal." },
+            { name: "Brown-Adson Doku Penseti", img: "brownadsonpenseti.jpg", desc: "Çok sayıda küçük diş barındıran hassas kavrama sağlayan tasarım. 7x7 veya 9x9 diş yapısı." },
+            { name: "Carmalt Kıymık Pensi", img: "carmaltpenset.jpg", desc: "Yabancı cisimleri doku içinden hassas bir şekilde çıkarmak için sivri ve düz uçlu." },
+            { name: "Cerrahi Penset", img: "cerrahipenset.jpg", desc: "Dokuları, damarları veya pansuman malzemelerini tutmak için temel cerrahi el aleti." },
+            { name: "Coronary Ultra-Fine Doku Penseti", img: "coronaryultrafinedokupenseti.jpg", desc: "Kalp damar cerrahisi ve mikro cerrahi için 0.5 mm'den küçük son derece hassas uç." },
+            { name: "Crafoord Doku Penseti", img: "crafoorddokupenseti.jpg", desc: "Göğüs ve damar cerrahisi için uzun, ince ve atravmatik tırtıklı yapı." },
+            { name: "C.W. Mayo Doku Penseti", img: "CWmayodokupenseti.jpg", desc: "Genel cerrahi ve jinekolojide derin kavitelerdeki dirençli yapıları güvenle kavrar." },
+            { name: "Davis Doku Penseti", img: "davisdokupenseti.jpg", desc: "Derin doku ve karın operasyonları için uzun, dişli ve dayanıklı bir alet." },
+            { name: "DeBakey Damar Penseti", img: "debakeydamarpenseti.jpg", desc: "Damar cerrahisinin altın standardı; dokuyu ezmeden mükemmel tutuş sağlayan atravmatik uç." },
+            { name: "Adson-DeBakey Doku Penseti", img: "debakeydokupenseti.jpg", desc: "Adson gövde yapısını DeBakey atravmatik uçlarıyla birleştiren hibrit penset." },
+            { name: "Dişli Adson Penset (Geniş)", img: "disliadsondokupenseti.jpg", desc: "Dermatoloji ve plastik cerrahide cilt kapatma için narin dişli yapı." },
+            { name: "Dişli Adson Penseti", img: "disliadsonpenseti.jpg", desc: "1x2 diş yapısına sahip, deri dokusunu kaymadan tutmayı sağlayan ince uçlu penset." },
+            { name: "Dişsiz Adson Penset", img: "dissizadsonpenset.jpg", desc: "Hassas dokulara zarar vermeden güvenli bir kavrama sağlayan tırtıklı ama dişsiz uç." },
+            { name: "Adson TC Dişsiz Penseti", img: "dissizadsontcpenset.jpg", desc: "Tungsten Karbür (TC) uçlarla güçlendirilmiş, uzun ömürlü altın saplı model." },
+            { name: "Ewald Dişsiz Penset", img: "dissizewaldpenset.jpg", desc: "Deri altı dokular için geniş tırtıklı ve ergonomik gövdeli tasarım." },
+            { name: "Dişsiz Penset (Standart)", img: "dissizpenset.jpg", desc: "Müdahaleler sırasında sargı bezi ve pansuman materyali tutmak için temel alet." },
+            { name: "Dişsiz Şişman Adson Penset", img: "dissizşişmanadsonpenset.jpg", desc: "Plastik cerrahide hassas dokular için geniş gövdeli ve çok ince uçlu varyasyon." },
+            { name: "Doku Koter Penseti", img: "dokukoterpenseti.jpg", desc: "Cerrahi kanamalarda koter ile kontrol sağlamak için kullanılan özel penset." },
+            { name: "Düz Sivri Koter Penseti", img: "duzsivrikoterpenset.jpg", desc: "Mikrocerrahide küçük damarların hedeflenerek yakılmasını sağlayan sivri uçlu yapı." },
+            { name: "Düz Sivri Penset", img: "duzsivripenset.jpg", desc: "Yüzeyel müdahalelerde yüksek hassasiyet sağlayan tırtıksız pens." },
+            { name: "Eğri İnce Uçlu Pansuman Penseti", img: "egriinceuclupansumanpenseti.jpg", desc: "Derin veya dar alanlarda hassas doku ve malzeme kavrama için kavisli ince uç." },
+            { name: "Süngü (Bayonet) Tipi Dişsiz Penset", img: "egriuclubayonetpenset.jpg", desc: "Süngü gövdesi sayesinde dar kavitelerde net bir görüş alanı sunar." },
+            { name: "Ewald Doku Penseti", img: "ewalddokupenseti.jpg", desc: "Geniş tutma alanı sayesinde yüksek kontrol sağlayan dişli diseksiyon pensi." },
+            { name: "Feilchenfeld Kıymık Penseti", img: "feilchenfeldpenset.jpg", desc: "Küçük yabancı cisimleri çıkarmak için tasarlanmış geniş saplı hassas alet." },
+            { name: "Gerald Dişsiz Koter Penseti", img: "geralddissizkoterpenseti.jpg", desc: "Vasküler ve nöroşirürji için son derece ince ve uzun yapılı koter pensi." },
+            { name: "Gerald TC Dişsiz Koter Penseti", img: "geraldtcdissizkoterpenseti.jpg", desc: "Tungsten Karbür plakalarla güçlendirilmiş dayanıklı Gerald modeli." },
+            { name: "Graefe Doku Penseti", img: "graefedokupenseti.jpg", desc: "Oftalmoloji (göz) için son derece küçük ve narin dişli yapıya sahip penset." },
+            { name: "Gruenwald Bayonet Penset", img: "gruenwaldbayonetpenset.jpg", desc: "KBB ve beyin cerrahisi için dirsekli gövde tasarımına sahip penset." },
+            { name: "Gutsch Bayonet Dişsiz Penset", img: "gutschbayonetdissizpenseti.jpg", desc: "Derin kaviteler ve Gutsch tipi tutuş özelliklerini birleştiren özel alet." },
+            { name: "Gutsch TC Dişsiz Klembi", img: "gutschdissizklembi.jpg", desc: "Hassas sinir dokuları ve damarlar için Tungsten Karbür takviyeli güvenli tutuş." },
+            { name: "Hudson Doku Penseti", img: "hudsondokupenseti.jpg", desc: "Biyopsi örnekleri ve dirençli dokular için geniş tırtıklı ve dişli yapı." },
+            { name: "Iris Dişsiz Penseti", img: "irisdissizpenseti.jpg", desc: "KBB ve göz cerrahisi için 10 cm boyunda çok ince uçlu küçük penset." },
+            { name: "Iris Doku Penseti", img: "irisdokupenseti.jpg", desc: "Hassas doku manipülasyonu için 1x2 narin dişli yapı." },
+            { name: "Jansen Bayonet Dişsiz Penset", img: "jansenbayonetdissizpenset.jpg", desc: "Kulak ve burun boşlukları için karakteristik dirsekli forma sahip penset." },
+            { name: "Kıymık İğnesi", img: "kiymikignesi.jpg", desc: "Batmış cam, diken gibi debrizleri kaldırmak ve çıkarmak için özel uç." },
+            { name: "Lucae Bayonet Dişsiz Penset", img: "lucaebayonetdissizpenset.jpg", desc: "KBB cerrahisinde kulak tamponu gibi malzemeleri tutmak için ergonomik tasarım." },
+            { name: "Potts-Smith Pansuman Penseti", img: "pottssmithpansumanpenseti.jpg", desc: "Derin vücut boşlukları ve damar cerrahisi için tasarlanmış uzun ve ince alet." },
+            { name: "Potts-Smith Technique TC Penseti", img: "pottssmithtcpansumanpenseti.jpg", desc: "Mikro cerrahi için TC uçlu, altın saplı teknik pansuman penseti." },
+            { name: "Russian Doku Penseti", img: "russiandokupenseti.jpg", desc: "Kaşık benzeri fincan uçları sayesinde organları ezmeden çok güçlü kavrar." },
+            { name: "Selman Doku Penseti", img: "selmandokupenseti.jpg", desc: "Damar cerrahisi ve dikiş materyalleri için atravmatik ince tırtıklı penset." },
+            { name: "Semken Dişsiz Penset", img: "semkendissizpenset.jpg", desc: "Dar boşluklarda hassas dokular için Adson'dan daha ince ve uzun yapı." },
+            { name: "Semken Pansuman Penseti", img: "semkenpansumanpenseti.jpg", desc: "Plastik cerrahi ve KBB branşlarında küçük materyaller için narin yapı." },
+            { name: "Singley Doku Penseti", img: "singleydokupenseti.jpg", desc: "Akciğer segmentleri gibi kaygan yapıların güvenli diseksiyonu için halka uçlu." },
+            { name: "TC Dişsiz Penset", img: "tcdissizpenset.jpg", desc: "Aşınmaya dirençli Tungsten Karbür uçlu, altın saplı uzun ömürlü penset." },
+            { name: "Thumb Tissue Forceps (Dişli)", img: "thumbtissueforceps.jpg", desc: "Deri ve faysa manipülasyonu için temel dişli cilt penseti." },
+            { name: "Thumb Dişli Penset (2x3)", img: "thumbtissueforceps2x3.jpg", desc: "Kalın veya kaygan dokuları çok daha güçlü kavrayan 2x3 dişli model." },
+            { name: "Tuttle Toraks Doku Penseti", img: "tuutletoraksdokupenseti.jpg", desc: "Akciğer cerrahisi ve plevra için kendine özgü dairesel halka uçlu alet." },
+            { name: "Wheeler Technique Plak/Damar Penseti", img: "wheelerteknikplakvedamarpenseti.jpg", desc: "Damar içindeki aterosklerotik plakların dokuya zarar vermeden temizlenmesi için tasarlanmış üst düzey hassasiyetli alet." },
+            { name: "Alçı Makası", img: "alcimakasi.jpg", desc: "Alçı kesimi için tasarlanmış, 20 cm (7-7/8\") uzunluğunda ağır hizmet makası." },
+            { name: "Bandaj Makası", img: "bandajmakasi.jpg", desc: "19,5 cm (7-3/4\") uzunluğunda, bir büyük parmak yüzüğü ile ergonomik tutuş sağlayan pansuman makası." },
+            { name: "Cerrahi Makaslar", img: "cerrahimakas.jpg", desc: "Düz ve kavisli seçenekleri mevcuttur (12,5 cm - 18 cm). Genel doku kesimi için standart alet." },
+            { name: "Cerrahi Makas - 2", img: "cerrahimakas2.jpg", desc: "İnce diseksiyonlar için uygun sivri/küt bıçak yapısına sahip model." },
+            { name: "Cerrahi Makas - 3", img: "cerrahimakas3.jpg", desc: "Hassas kavisli yapısı ile doku katmanları arasında rahat ilerleme sağlar." },
+            { name: "Cerrahi Makas - 4 (TC)", img: "cerrahimakas4.jpg", desc: "Tungsten Karbür (TC) uçlu, altın saplı, uzun ömürlü keskinlik sunan model." },
+            { name: "Cerrahi Makas - 5", img: "cerrahimakas5.jpg", desc: "Düz yapılı, standart cerrahi müdahaleler için dayanıklı makas." },
+            { name: "Cooley Arteriyotomi Makası", img: "cooleymakas.jpg", desc: "Kalp damar cerrahisinde arterlerin boyuna açılması için 90° veya 125° açılı hassas makas." },
+            { name: "Destekli Makas", img: "desteklimakas.jpg", desc: "21 cm (8-1/4\") uzunluğunda, sert materyalleri kesmek için güç destekli mekanizma." },
+            { name: "Herkül Alçı Makası", img: "herkulalcimakasi.jpg", desc: "19 cm (7-1/2\") uzunluğunda, tek bıçağı tırtıklı, zorlu alçı ve materyaller için ekstra güçlü." },
+            { name: "Hill Stitch Makasları", img: "hillstitchmakas.jpg", desc: "11 cm (4-3/8\") uzunluğunda, kavisli ucuyla dikiş alma işlemlerinde yüksek kontrol sağlar." },
+            { name: "Maki Makası", img: "makimakasi.jpg", desc: "14.5 cm (5-3/4\") uzunluğunda, özel tırtıklı ve açılı yapısıyla bandaj ve benzeri materyaller için." },
+            { name: "Mayo Makas", img: "mayomakas.jpg", desc: "14,5 cm ve 19 cm seçenekleri mevcuttur. Düz, tırtıklı bıçak yapısıyla faysa ve ağır doku kesimi için idealdir." },
+            { name: "Moleskin Makası", img: "moleskinmakas.jpg", desc: "Düz (18 cm) ve Kavisli (19 cm) seçenekleri mevcuttur. Bir bıçağı tırtıklı yapısıyla kaymayı önler." },
+            { name: "Sütur Alma Makası", img: "suturalmamakasi.jpg", desc: "14 cm (5-1/2\") uzunluğunda, dikiş iplerini güvenle yakalayıp kesmek için özel çentikli uç." },
+            { name: "Umblikal Makas", img: "umblikalmakas.jpg", desc: "Geniş ve kavisli bıçak yapısı ile doğum sonrası göbek kordonunu kaydırmadan güvenle keser." },
+            { name: "Yüksek Seviye Bandaj Makası", img: "yuksekseviyebandajmakasi.jpg", desc: "14 cm (5-1/2\") uzunluğunda, yanlardan açılı sapları ve tek tırtıklı bıçağı ile profesyonel kullanım." },
+            { name: "Adson Hemostatik Klemp", img: "adsonhemostatikklemp.jpg", desc: "Mikrocerrahi ve plastik cerrahide küçük damarları atravmatik bir şekilde klemplemek için son derece ince ve hassas uçlu alet." },
+            { name: "Allis Doku Klembi", img: "allisdokuklembi.jpg", desc: "Bağırsak veya fasya gibi ağır ve kaygan dokuları, birbirine geçen dişli yapısıyla sıkıca kavramak için kullanılır." },
+            { name: "Allis Hassas Doku Klembi", img: "allishassasdokuklembi.jpg", desc: "Narin dokuları veya fasyaları minimum travmayla tutmak için tasarlanmış, standart Allis'e göre çok daha zarif bir yapı." },
+            { name: "Babcock Doku Klembi", img: "babcockdokuklembi.jpg", desc: "Bağırsak veya fallop tüpü gibi narin organları ezmeden tutmak için delikli (fenestre) ve dişsiz bir yapıya sahip atravmatik klemp." },
+            { name: "Backhaus Çamaşır Klembi", img: "backhauscamasirklembi.jpg", desc: "Steril örtüleri birbirine veya hastanın cildine tutturarak cerrahi alanı sabitlemek için kullanılan en yaygın pens." },
+            { name: "Bainbridge Klemp", img: "bainbridgeklemp.jpg", desc: "Damar veya bağırsak gibi narin dokuları geçici kapatmak için uzun ve boylamasına tırtıklı çenelere sahip zarif bir alet." },
+            { name: "Ballenger Over Klembi", img: "ballengeroverklembi.jpg", desc: "Düz ve kavisli seçenekleri mevcuttur. Operasyonlarda narin dokuların stabilizasyonu için kullanılır." },
+            { name: "Bengolea Hemostatik Klembi", img: "bengoleahemostatikklembi.jpg", desc: "Derin vücut boşluklarındaki büyük damarları klemplemek için oldukça uzun ve sağlam yapılı tasarım." },
+            { name: "Best Kolon Klemp", img: "bestkolonklemp.jpg", desc: "Kalın bağırsak cerrahisinde segmentleri doku hasarını en aza indirerek güvenli bir şekilde kapatmak için tasarlanmıştır." },
+            { name: "Blake Safra Taşı Tutma Klembi", img: "blakesafratasitutmaklembi.jpg", desc: "Safra kesesi veya kanallarındaki taşları parçalamadan kavrayıp dar kanallardan tahliye etmek için özel tırtıklı yapı." },
+            { name: "Bland Servikal Traksiyon Klembi", img: "blandservikaltraksiyonklembi.jpg", desc: "Rahim ağzını (serviks) sıkıca kavrayıp çekmek ve sabit tutmak amacıyla kullanılan jinekolojik alet." },
+            { name: "Bonney Organ Tutma Klembi", img: "bonneyorgantutmaklembi.jpg", desc: "İç organları veya ağır dokuları güvenli bir şekilde kavrayıp yerini değiştirmek için kullanılan güçlü bir pens türüdür." },
+            { name: "Bozeman Uterin Pansuman Klembi", img: "bozemanuterinklembi.jpg", desc: "Jinekolojik işlemlerde rahim içine tampon yerleştirmek veya pansuman taşımak için kullanılan uzun 'S' kıvrımlı alet." },
+            { name: "Bridge Hemostatik Klemp", img: "bridgehemostatikklembi.jpg", desc: "Derin dokulardaki kan damarlarını görüşü kapatmadan atravmatik bir şekilde klemplemek için açılı uç yapısına sahip." },
+            { name: "Büzgü Dikiş Klembi", img: "buzgudikisklembi.jpg", desc: "Organ dokusuna 'tütün kesesi' ağzı gibi büzgülü dikiş atmayı kolaylaştıran, iğne kanallı özel klemp." },
+            { name: "Çamaşır Klembi (Hortumlu)", img: "camasirklembi.jpg", desc: "Hortum ve kabloların (koter, aspiratör vb.) masadan kaymasını engellemek için halkalı veya kanal yapısına sahip pens." },
+            { name: "Rochester-Carmalt Klembi", img: "carmaltklembi.jpg", desc: "Büyük damarları ve kalın doku pediküllerini dikey tırtıkları sayesinde yana kaydırmadan güçlüce kavrar." },
+            { name: "Coller Hemostatik Klembi", img: "collerhemostatikklembi.jpg", desc: "Kelly pensine göre daha zarif ve tam boy tırtıklı olan bu alet, derin bölgelerde hassas diseksiyon sağlar." },
+            { name: "Dandy Hemostatik Klembi", img: "dandyhemostatikklembi.jpg", desc: "Kafa derisindeki kan damarlarını kontrol etmek için yana doğru kavisli uçlara sahip nöroşirürji aleti." },
+            { name: "Dandy-Kolodny Klembi", img: "dandykolodnyklembi.jpg", desc: "Özellikle kafa derisi damarlarını klemplemek için tasarlanmış yana kavisli (sideways curved) hassas pens." },
+            { name: "DeBakey Histerektomi Klembi", img: "debakeyhisterektomiklembi.jpg", desc: "Rahim ameliyatlarında damar ve dokuları atravmatik (DeBakey dişli) yapısıyla güvenle mühürler." },
+            { name: "De Lee Obstetrik Klembi", img: "deleeobstetrik.jpg", desc: "Doğum sırasında bebeğin başını travma yaratmadan kavrayarak çıkışa rehberlik eden kaşık yapılı forseps." },
+            { name: "De Lee Servikal Kavrama Klembi", img: "deleeservikaltutmaklembi.jpg", desc: "Jinekolojik muayene ve müdahalelerde rahim ağzını nazikçe tutup stabilize eden alet." },
+            { name: "Edna Atravmatik Çamaşır Klembi", img: "ednaatravmatikcamasirklembi.jpg", desc: "Cerrahi örtüleri delmeden, sterilizasyon bariyerini koruyarak sıkıştıran küt uçlu sabitleme pensi." },
+            { name: "Edna Çamaşır Klembi", img: "ednacamasirklembi.jpg", desc: "Örtü ve havluları güvenle tutmak için tasarlanmış klasik küt uçlu Edna modeli." },
+            { name: "Finochietto Torasik Klemp", img: "finochiettotorasikklemp.jpg", desc: "Bronş ve büyük göğüs damarlarını derin sahalarda dikey tırtıklarıyla kaydırmadan tutan ağır klemp." },
+            { name: "Foerster Over Klembi", img: "foersteroverklembi.jpg", desc: "Uçları delikli yapısı sayesinde operasyon sahasındaki kanı temizlemek (tampon tutmak) veya organları kavramak için ideal." },
+            { name: "Gemini Klemp", img: "geminiklemp.jpg", desc: "Derin cerrahi sahalarda damarların altından sütur geçirmek için 90 derece dik açılı ve enine tırtıklı alet." },
+            { name: "Gomco Sünnet Klembi", img: "gomcosünnetklembi.jpg", desc: "Sünnet işleminde kanamayı durdurmak ve kesiyi kansız gerçekleştirmek için kullanılan mekanik düzenek." },
+            { name: "Gray Sistik Kanal Klembi", img: "graysistikkanalklembi.jpg", desc: "Safra kesesi ameliyatlarında sistik kanalı ve damarları ezmeden kavramak için kendine has kavisli uç yapısı." },
+            { name: "Gunnar Makaralı Klemp", img: "gunnarmakaraliklemp.jpg", desc: "Mikrocerrahide damar sütünları sırasında gerilimi makaralı mekanizmasıyla hassasça ayarlayan özel alet." },
+            { name: "Halsted Mosquito Klemp", img: "halstedmosquitoklembi.jpg", desc: "Çok küçük damarları tutmak için tasarlanmış cerrahinin en temel ve en küçük hemostatik pensi." },
+            { name: "Harrington P.D. Klemp", img: "harringtonklemp.jpg", desc: "Derin kavitelerde Patent Ductus damarlarını klemplemek için tasarlanmış özel kavisli hemostatik alet." },
+            { name: "Heaney-Ballantine Histerektomi", img: "heaneyballantinehisterektomiklembi.jpg", desc: "Uterusun (rahim) yan bağlarını ve damarlarını tutmak için kullanılan düz tırtıklı ağır jinekolojik pens." },
+            { name: "Heaney Histerektomi Klembi", img: "heaneyhisterektomiklembi.jpg", desc: "Çapraz tırtıklı ve dişli ucuyla rahim bağlarını kaydırmadan kavramak için tasarlanmış kavisli ağır klemp." },
+            { name: "henrotin velsellum klembi", img: "henrotinvelsellumklembi.jpg", desc: "Jinekolojik muayene sırasında rahmi sıkıca kavramak için kullanılan alettir." },
+            { name: "Jones Çapraz Çamaşır Klembi", img: "jonescaprazcamasirklembi.jpg", desc: "Yaylı mekanizması sayesinde cerrahi örtüleri çapraz bir şekilde birbirine sabitleyen hafif pens." },
+            { name: "Jones Hemostat Klemp", img: "Joneshemostatklembi.jpg", desc: "Jones tipi yaylı yapıyı damar tutma hassasiyetiyle birleştiren pratik ve hafif hemostatik alet." },
+            { name: "Kablo Sabitleme Klembi", img: "kablosabitlemeklembi.jpg", desc: "Koter, kamera ve aspiratör kablolarını düzenli tutup masaya sabitlemek için özel halkalı tasarım." },
+            { name: "Kelly Klembi", img: "kellyklembi.jpg", desc: "Orta büyüklükteki damarlar için kullanılan, ucu yarım tırtıklı temel cerrahi hemostatik pens." },
+            { name: "Kelly Plasenta Klembi", img: "kellyplasentaklembi.jpg", desc: "Doğum sonrası plasenta ve membranları uterus içinden güvenle temizlemek için tasarlanmış geniş kavisli pens." },
+            { name: "Lahey Traksiyon Klembi", img: "laheytraksiyonklembi.jpg", desc: "Özellikle tiroid cerrahisinde sert dokuları sıkıca kavrayıp çekmek için 3x3 dişli yapıya sahip alet." },
+            { name: "Lawrence Hemostatik Klemp", img: "lawrencehemostatikklembi.jpg", desc: "Derin bölgelerdeki damarları klemplemek için kullanılan uzun ve zarif yapılı damar pensi." },
+            { name: "Lejeune Toraks Klembi", img: "lejeunetoraksklembi.jpg", desc: "Göğüs cerrahisinde akciğer dokusunu veya damarları atravmatik bir şekilde tutmak için özel kavisli uç." },
+            { name: "Lore Delikli Klemp", img: "loredelikliklemp.jpg", desc: "Doku sabitleme ve dikiş geçişleri sırasında hassas kavrama sağlayan fenestre uçlu klemp." },
+            { name: "Mastin Kas Klembi", img: "mastinkasklembi.jpg", desc: "Ortopedi ve genel cerrahide kas liflerini travmayı minimize ederek tutan geniş ağızlı tasarım." },
+            { name: "Mayo-Pean Klemp", img: "mayopeanklembi.jpg", desc: "Kalın dokuları ve büyük damarları klemplemek için çeneleri tam boy tırtıklı ağır hemostatik pens." },
+            { name: "McDougal Prostatektomi Klembi", img: "mcdougalprostatektomiklembi.jpg", desc: "Ürolojik cerrahide dar pelvik sahada çalışmaya uygun özel açılı prostat klembi." },
+            { name: "Nichlos Hortum Tutma Pensi", img: "nichloshortumtutmapensi.jpg", desc: "Aspiratör hortumlarını steril örtülere zarar vermeden sabitlemek için tasarlanmış koruyucu uç yapısı." },
+            { name: "Ochsner-Kocher Klemp", img: "ochsnerkocherklemp.jpg", desc: "Kaygan ve dirençli dokuları (faysa) uç kısmındaki 1x2 dişli yapısıyla kaydırmadan tutan güçlü pens." },
+            { name: "Peers Delmeyen Çamaşır Klembi", img: "peersdelmeyencamasirklembi.jpg", desc: "Örtüleri veya hortumları delmeden, sterilizasyon bariyerini koruyarak sıkıştıran atravmatik pens." },
+            { name: "Pennington Klemp", img: "penningtonklembi.jpg", desc: "Uç kısmındaki üçgen halka yapısı sayesinde bağırsak veya akciğer dokusunu geniş yüzeyle kavrayan alet." },
+            { name: "Phaneuf Uterin Arter Klembi", img: "phaneufuterinarterklembi.jpg", desc: "Rahim ameliyatlarında uterin arterleri mühürlemek için tasarlanmış ağır ve güçlü tırtıklı klemp." },
+            { name: "Plastistat Adson Klemp", img: "plastistatsadsonklemp.jpg", desc: "Adson tipi hassas uç yapısını hafif Plastistat mekanizmasıyla birleştiren narin damar pensi." },
+            { name: "Plastistat Collier Klemp", img: "plastistatscollierklemp.jpg", desc: "Hassas damar ve doku klempleme için Collier tipi ağız yapısına sahip ergonomik alet." },
+            { name: "Polk Plasenta Klembi", img: "polkplasentaklembi.jpg", desc: "Plasenta ve membranların uterus içinden nazikçe uzaklaştırılması için kullanılan kavisli obstetrik pens." },
+            { name: "Providence Hospital Klemp", img: "providencehospitalklemp.jpg", desc: "Küçük ve orta boy damarların hemostazı için kullanılan ucu tam tırtıklı hastane tipi klemp." },
+            { name: "Randall Böbrek Taşı Klembi", img: "randallklembi.jpg", desc: "Böbrek kavislerine uygun açılı, taş çıkarmak için kullanılan fenestre uçlu üroloji aleti." },
+            { name: "Rankin Klemp", img: "rankinklemp.jpg", desc: "Kelly klembe benzeyen ancak daha ince yapılı, ucu yarım tırtıklı hemostatik pens." },
+            { name: "Resano Anastomoz Klembi", img: "resanoatravmatikanastomozklembi.jpg", desc: "Damar anastomozları sırasında dokuya zarar vermeden geçici kapama sağlayan atravmatik vasküler klemp." },
+            { name: "Right Angle (Dik Açılı) Klemp", img: "rightangleklemp.jpg", desc: "Derin sahalarda damar altından dikiş geçirmek için kullanılan 90 derece açılı temel diseksiyon aleti." },
+            { name: "Rochester-Pean 1/2 Tırtıklı", img: "rochesterpean12klemp.jpg", desc: "Çenelerinin yarısı tırtıklı olan Pean versiyonu; damar ve doku kontrolü için kullanılır." },
+            { name: "Rochester-Pean Tam Tırtıklı", img: "rochesterpeanklemp.jpg", desc: "Ağır dokuları ve büyük damarları tutmak için boydan boya tırtıklı güçlü hemostatik pens." },
+            { name: "Roeder Bilyeli Çamaşır Klembi", img: "roederbilyelicamasirklembi.jpg", desc: "Uçlarındaki bilyeler sayesinde örtüleri cilde sabitlerken doku delinmesini sınırlayan özel tasarım." },
+            { name: "Sarot İntratorasik Arter Klembi", img: "sarotintratorasikarterklembi.jpg", desc: "Göğüs cerrahisinde derin arterleri güvenle tutmak için tasarlanmış uzun kavisli klemp." },
+            { name: "Schnidt Tonsil Klembi", img: "schnidttonsilklembi.jpg", desc: "Bademcik ameliyatlarında hemostaz sağlamak için kullanılan ince ve zarif yapılı kavisli pens." },
+            { name: "Serrefine (Cross-Action) Klemp", img: "serrefinescrossactionklemp.jpg", desc: "Damar cerrahisinde damarı geçici kapatmak için kullanılan yaylı küçük mikro-klemp." },
+            { name: "Sistik Kanal Kateter Klembi", img: "sistikkanalkateterklembi.jpg", desc: "Safra kesesi ameliyatlarında sistik kanala kateter yerleştirilmesini stabilize eden özel klemp." },
+            { name: "Somer Uterin Elevasyon Klembi", img: "someruterinelevasyonklembi.jpg", desc: "Jinekolojik operasyonlarda rahmi manipüle etmek ve yukarı kaldırmak için kullanılan geniş ağızlı alet." },
+            { name: "Spermatik Kord Sabitleme Klembi", img: "spermatikkordsabitlemeklembi.jpg", desc: "Fıtık operasyonlarında spermatik kordu travmasız stabilize etmek için kullanılan halkalı tasarım." },
+            { name: "Toraks Arter Klembi", img: "toraksarterklembi.jpg", desc: "Göğüs kafesi içindeki derin arterleri klemplemek için tasarlanmış uzun ve kavisli göğüs cerrahisi aleti." },
+            { name: "Vanderbilt Damar Klembi", img: "vanderbiltdamarklembi.jpg", desc: "Vasküler cerrahide damarları ezmeden güvenle kavramak için tasarlanmış özel tırtıklı atravmatik klemp." },
+            { name: "Vazektomi Klembi", img: "vazektomiklembi.jpg", desc: "Vazektomi prosedüründe vaz deferensi cildi delmeden stabilize etmek için kullanılan halka uçlu alet." },
+            { name: "Wallace Sezaryen Klembi", img: "wallancesezaryenklembi.jpg", desc: "Sezaryen ameliyatlarında uterusu (rahim) güvenle kapatmak için kullanılan geniş ve sağlam pens." },
+            { name: "Wertheim-Cullen Pedikül Klembi", img: "wertheimcullenpedikulklembi.jpg", desc: "Pelvik cerrahide kalın doku pediküllerini mühürlemek için tasarlanmış 90 derece açılı ağır klemp." },
+            { name: "Williams Kıymık Klembi", img: "williamskiymikklembi.jpg", desc: "Doku içindeki yabancı cisimleri veya kemik parçalarını tutup çıkarmak için kullanılan ince uçlu pens." },
+            { name: "Zipser Penis Klembi", img: "zipserpenisklembi.jpg", desc: "Ürolojik işlemlerde üretral sızıntıyı önlemek için dışarıdan baskı uygulayan ayarlanabilir özel klemp." },
+            { name: "Barraquer Mikro Portegü", img: "barraquermikroportegu.jpg", desc: "Oftalmoloji ve mikrocerrahide kullanılan, son derece narin iğneleri tutmak için tasarlanmış yaylı mekanizmalı hassas portegü." },
+            { name: "Baumgartner Bulldog Portegü", img: "baumgartnerbulldogportegu.jpg", desc: "Kısa ve güçlü çeneleriyle küçük cerrahi iğneleri kaydırmadan tutmak için tasarlanmış kompakt ve dayanıklı model." },
+            { name: "Baumgartner Portegü", img: "baumgartnerportegu.jpg", desc: "Standart cerrahi süturlarda kullanılan, tırtıklı iç yüzeyi ve iğne yuvası ile güvenilir tutuş sağlayan klasik portegü." },
+            { name: "Castroviejo Mikro Portegü", img: "castroviejomikroportegu.jpg", desc: "Plastik ve vasküler cerrahide altın standart. İnce bilek hareketlerine izin veren ergonomik yaylı yapı. Kilitli mekanizmaya sahiptir." },
+            { name: "Gillies Portegü-Makas", img: "gilliesportegumakas.jpg", desc: "İğne tutma ve dikiş ipi kesme özelliğini tek bir alette birleştiren, asimetrik sap yapısına sahip fonksiyonel cerrahi enstrüman." },
+            { name: "Gregory Stay Klemp Portegü", img: "gregorystayklempportegu.jpg", desc: "Vasküler cerrahide askı dikişlerini veya ince sütur materyallerini stabilize etmek için tasarlanmış özel uçlu portegü." },
+            { name: "Heaney Portegü", img: "heaneyportegu.jpg", desc: "Jinekolojik cerrahide, özellikle derin ve dar pelvik alanlarda iğneye hakim olmak için tasarlanmış kavisli ve güçlü yapılı portegü." },
+            { name: "Litvak-Pereyra Ligatür İğnesi", img: "litvakpereyraligaturignesi.jpg", desc: "Ürolojik ve jinekolojik askı operasyonlarında dikiş materyalini derin doku katmanlarından geçirmek için kullanılan kılavuz alet." },
+            { name: "Microvascular Portegü", img: "microvasculeryuvarlaksaplıportegu.jpg", desc: "Mikrocerrahide parmaklar arasında döndürülerek en hassas açılarda dikiş atmayı sağlayan yuvarlak saplı ergonomik tasarım." },
+            { name: "Stamey İğnesi", img: "stameyignesi.jpg", desc: "Ürolojide mesane boynu suspansiyon operasyonları için kullanılan, ucu delikli, uzun ve yüksek dayanımlı iğne kılavuzu." },
+            { name: "Standart Portegü", img: "standartportegu.jpg", desc: "Genel cerrahi prosedürlerinde her türlü iğne boyutuna uygun, tırtıklı çene yapısına sahip temel dikiş aleti." },
+            { name: "Stratte Portegü", img: "stratteportegu.jpg", desc: "Derin kavitelerde iğneyi en zor açılarda bile güvenle tutabilmek için uç kısmı 'S' şeklinde kavisli tasarlanmış özel portegü." },
+            { name: "Allison Akciğer Ekartörü", img: "allisonekartoru.jpg", desc: "Göğüs cerrahisinde akciğer dokusunu nazikçe geri çekmek için kullanılan geniş, kürek uçlu manuel ekartör." },
+            { name: "Army-Navy Ekartörü", img: "armyekartoru.jpg", desc: "Hem derin hem yüzeyel dokuları çekmek için iki farklı uca sahip, cerrahinin en temel çift taraflı manuel ekartörü." },
+            { name: "Brewster Ekartör", img: "brewsterekartor.jpg", desc: "Derin kavitelerde güçlü doku traksiyonu sağlamak için tasarlanmış geniş ağızlı manuel ekartör." },
+            { name: "Brewster Frenik Ekartör", img: "brewsterfrenikekartor.jpg", desc: "Özellikle frenik sinir bölgesini koruyarak geri çekmek için tasarlanmış spesifik göğüs cerrahisi modeli." },
+            { name: "Children's Hospital Ekartörü", img: "childrenshospitalekartoru.jpg", desc: "Pediatrik cerrahide küçük ve narin dokuları çekmek için tasarlanmış küçük ölçekli hassas alet." },
+            { name: "Converse Cilt Ekartörü", img: "converseciltekartoru.jpg", desc: "Plastik cerrahide cilt kanatlarını (flap) tutmak için kullanılan ince uçlu, parmak halkalı ekartör." },
+            { name: "Cooley Atriyum Ekartörü", img: "cooleyatriyumekartoru.jpg", desc: "Kalp cerrahisinde atriyumu açık tutarak kapağa erişim sağlayan özel kavisli alet." },
+            { name: "Cottle Ala Ekartörü", img: "cottlealarekartoru.jpg", desc: "Rinoplasti operasyonlarında burun kanatlarını yukarı çekmek için kullanılan nazal ekartör." },
+            { name: "Crile Ekartörü", img: "crileekartoru.jpg", desc: "Yüzeyel yaraları veya damar yollarını açığa çıkarmak için kullanılan 'L' uçlu manuel ekartör." },
+            { name: "Cushing Dekompresyon Ekartörü", img: "cushingdekompresyonekartoru.jpg", desc: "Beyin cerrahisinde sinir köklerini nazikçe kenara çekmek için kullanılan küret uçlu alet." },
+            { name: "Dandy Sinir Ekartörü", img: "dandysinirekartoru.jpg", desc: "Nöroşirürjide hassas sinir köklerini koruyarak kenara çekmek için kullanılan ince kavisli uç." },
+            { name: "Davidson Skapula Ekartörü", img: "davidsonskapulaekartoru.jpg", desc: "Torasik cerrahide skapulayı (kürek kemiği) yukarı kaldırmak için tasarlanmış geniş, basamaklı ekartör." },
+            { name: "Davis Beyin Spatulası", img: "davisbeyinspatulasi.jpg", desc: "Beyin dokusunu geniş yüzeyle, zarar vermeden ekarte etmek için kullanılan esnek metal şerit." },
+            { name: "Davis Ekartörü", img: "davisekartoru.jpg", desc: "Batın ve derin kavitelerde dokuları ekarte etmek için kullanılan saplı manuel ekartör." },
+            { name: "Deaver Ekartörü", img: "deaverekartoru.jpg", desc: "Karın duvarını veya organları çekmek için kullanılan soru işareti şeklindeki ikonik derin ekartör." },
+            { name: "DeBakey-Cooley Ekartörü", img: "debakeycooleyekartoru.jpg", desc: "Damar ve kalp cerrahisinde kaviteleri görüşü kapatmadan ekarte eden atravmatik alet." },
+            { name: "Deep Deaver Ekartörü", img: "deepdeaverekartoru.jpg", desc: "Standart Deaver'ın daha derin kaviteler için tasarlanmış uzun ve geniş versiyonu." },
+            { name: "Deep Rake Ekartörü", img: "deeprakeekartor.jpg", desc: "Derin doku katmanlarını tırmık benzeri dişleriyle güçlü şekilde çekmek için kullanılır." },
+            { name: "Dingman Zygoma Ekartörü", img: "dingmanzygomaekartoru.jpg", desc: "Maksillofasiyal cerrahide elmacık kemiği bölgesindeki dokuları ekarte etmek için kullanılan spesifik alet." },
+            { name: "Dittel Üretral Dilatörler", img: "ditteluretraldilatorler.jpg", desc: "Ürolojide üretral daralmaları kademeli olarak genişletmek için kullanılan metal bujiler." },
+            { name: "Doyen Ekartörü", img: "doyenekartoru.jpg", desc: "Pelvik operasyonlarda mesaneyi veya karın duvarını geniş yüzeyle geri çekmek için kullanılır." },
+            { name: "Emmett Uterin Prob", img: "emmettuterinprob.jpg", desc: "Jinekolojide uterusun derinliğini ve açısını belirlemek için kullanılan ucu küt metal çubuk." },
+            { name: "Extra Deep Deaver", img: "extradeepdeaverekartoru.jpg", desc: "Obez hastalarda veya en derin pelvis operasyonlarında kullanılan devasa Deaver modeli." },
+            { name: "Facelift Ekartörü", img: "faceliftekartoru.jpg", desc: "Yüz germe operasyonlarında deri kanatlarını nazikçe kaldırmak için kullanılan özel uçlu ekartör." },
+            { name: "Farabeuf Ekartörü", img: "farabeufekartoru.jpg", desc: "Ortopedi ve genel cerrahide kullanılan 'L' formunda çift taraflı temel manuel ekartör." },
+            { name: "Fistül Probu", img: "fistulprobu.jpg", desc: "Fistül kanallarının yönünü ve derinliğini belirlemek için kullanılan bükülebilir metal kılavuz." },
+            { name: "Flexible Rake Ekartör", img: "flexiblerakereractorciltekartoru.jpg", desc: "Plastik cerrahide cilt tabakasını travmasız geri çekmek için esnek pençe uçlu ekartör." },
+            { name: "Fomon Ekartörü", img: "fomonekartoru.jpg", desc: "Burun estetiğinde kanatları yukarı çekmek için kullanılan iki toplu uçlu nazal ekartör." },
+            { name: "Freer Cilt Ekartörü", img: "freerciltekartoru.jpg", desc: "Küçük kesilerde dokuların geri çekilmesi için kullanılan narin yapılı 'L' uçlu manuel alet." },
+            { name: "Freer Ekartör (Spatula)", img: "freerekartoru.jpg", desc: "Hem dokuyu kaldırmak hem ekarte etmek için kullanılan çift taraflı spatula." },
+            { name: "Gillies/Converse Cilt Ekartörü", img: "gilliesconverseciltekartoru.jpg", desc: "Plastik cerrahide cilt kanatlarını kaldırmak için kullanılan ucu çengelli narin ekartör." },
+            { name: "Goelet Ekartörü", img: "goeletekartoru.jpg", desc: "Yüzeyel dokuları ekarte etmek için her iki ucu farklı genişlikte olan çift taraflı ekartör." },
+            { name: "Graves Vajinal Spekulum", img: "gravesvajinalspekulum.jpg", desc: "Jinekolojik muayenelerde vajinal duvarları açan ayarlanabilir vidalı klasik spekulum." },
+            { name: "Green Ekartör", img: "greenekartor.jpg", desc: "Boyun operasyonlarında yumuşak dokuları travmasız çekmek için kullanılan pencereli ekartör." },
+            { name: "Guthrie Cilt Ekartörü", img: "guthrieciltekartoru.jpg", desc: "Küçük kesilerde deri kenarlarını tutmak için kullanılan ince pençe uçlu alet." },
+            { name: "Haight Ekartörü", img: "haightekartoru.jpg", desc: "Torasik cerrahide kaburgalar arasından akciğer yapılarını ekarte eden açılı ekartör." },
+            { name: "Hank Uterin Dilatatör", img: "hankuterindilator.jpg", desc: "Rahim ağzını kademeli genişletmek için kullanılan çift uçlu ve boğumlu metal çubuk." },
+            { name: "Harrington Ekartörü", img: "harringtonekartoru.jpg", desc: "'Sweetheart' olarak da bilinen organ koruyucu kalp uçlu derin batın ekartörü." },
+            { name: "Harrington Extra Deep", img: "harringtonextradeepekartoru.jpg", desc: "Ekstra uzun gövdeli Harrington modeli; çok derin pelvik boşluklar içindir." },
+            { name: "Harrington Splanchnic", img: "harringtonsplanchnicekartoru.jpg", desc: "Derin iç organ yapılarını hassasça ekarte etmek için kullanılan zarif uçlu model." },
+            { name: "Hulka Tenakulum ve Prob", img: "hulkatenakulumveprob.jpg", desc: "Rahmi manipüle etmek ve derinliği ölçmek için kullanılan kombine jinekolojik alet." },
+            { name: "Infant Ekartörü", img: "infantekartoru.jpg", desc: "Bebek operasyonları için tasarlanmış son derece küçük boyutlu manuel ekartör." },
+            { name: "Israel Ekartör", img: "israelekartor.jpg", desc: "Geniş tırmık ucuyla kalın doku katmanlarını geri çekmek için kullanılan güçlü ekartör." },
+            { name: "Jackson Trakea Ekartörü", img: "jacksontrakeaekartoru.jpg", desc: "Trakeostomi sırasında soluk borusu kenarlarını açmak için kullanılan spesifik alet." },
+            { name: "Jackson Trakeal Tenakulum", img: "jacksontrakealtenakulum.jpg", desc: "Trakea kıkırdağını tutup sabitlemek için kullanılan tek dişli keskin kanca." },
+            { name: "Johnson Cilt Ekartörü", img: "johnsonciltekartoru.jpg", desc: "Plastik cerrahide deri kenarlarını çekmek için kullanılan narin tırmık tipi ekartör." },
+            { name: "Joseph Cilt Ekartörü", img: "josephciltekartoru.jpg", desc: "Rinoplastide burun derisini kaldırmak için kullanılan iki dişli keskin ekartör." },
+            { name: "Kelly Ekartörü", img: "kellyekartoru.jpg", desc: "Derin batın cerrahisinde karın duvarını geri çekmek için kullanılan geniş ağızlı ekartör." },
+            { name: "Kleinert-Ragnell Ekartörü", img: "kleinertragnellekartoru.jpg", desc: "El cerrahisi gibi alanlarda kullanılan çift taraflı narin manuel ekartör." },
+            { name: "Kogan Endoservikal Spekulum", img: "koganendoservikalspekulum.jpg", desc: "Rahim ağzı kanalı içini gözlemlemek için kullanılan ayarlanabilir jinekolojik spekulum." },
+            { name: "Lahey Ekartörü", img: "laheyekartoru.jpg", desc: "Tiroid ve yüzeyel doku operasyonlarında kullanılan ince gövdeli, dik açılı manuel ekartör." },
+            { name: "Langenbeck Ekartörü", img: "langenbeckekartoru.jpg", desc: "Yumuşak doku ve yara kenarlarını ekarte etmek için kullanılan temel 'L' uçlu cerrahi alet." },
+            { name: "Little Ekartörü", img: "littlerekartoru.jpg", desc: "Küçük kesilerde doku traksiyonu sağlamak için kullanılan parmak halkalı narin ekartör." },
+            { name: "Love Sinir Ekartörü", img: "lovesinirekartoru.jpg", desc: "Nöroşirürjide sinir köklerini travma yaratmadan kenara çekmek için tasarlanmış kavisli uç." },
+            { name: "Lukens Timus Ekartörü", img: "lukenstimusekartoru.jpg", desc: "Pediatrik göğüs cerrahisinde timus bezini ekarte etmek için kullanılan narin model." },
+            { name: "Mayo Abdominal Ekartör", img: "mayoabdominalekartoru.jpg", desc: "Karın duvarını çekmek için kullanılan geniş ve derin ağızlı, yüksek traksiyonlu saplı ekartör." },
+            { name: "Mayo-Collins Ekartörü", img: "mayocollinsekartoru.jpg", desc: "Farklı derinliklerdeki dokuları ekarte edebilen çift taraflı manuel enstrüman." },
+            { name: "Meyerding Parmak Ekartörü", img: "meyerdingparmakekartoru.jpg", desc: "Omurga cerrahisinde kasları geri çekmek için kullanılan tırtıklı uçlu ve parmak halkalı güçlü alet." },
+            { name: "Mueller Tırmık Ekartör", img: "muellertirmikekartor.jpg", desc: "Yüzeyel doku traksiyonu için pençe uçlu tırmık tipi manuel ekartör." },
+            { name: "Murphy Tırmık Ekartörü", img: "murphytirmikekartoru.jpg", desc: "Sert doku üzerindeki yumuşak dokuları çekmek için kullanılan parmak boşluklu tırmık ekartör." },
+            { name: "Nazal Işıklı Ekartör", img: "nazalisikliekartoru.jpg", desc: "Nazal cerrahide derin boşlukları ekarte ederken aynı zamanda aydınlatma sağlayan fiber optik uyumlu alet." },
+            { name: "New’s Trakea Ekartörü", img: "newstrakeaekartoru.jpg", desc: "Trakeostomi sırasında trakea kenarlarını açmak için kullanılan keskin uçlu manuel ekartör." },
+            { name: "Parker Ekartörü", img: "parkerekartoru.jpg", desc: "Yüzeyel dokuları çekmek için kullanılan çift taraflı, 'C' kavisli uçlara sahip manuel ekartör." },
+            { name: "Parker-Mott Ekartörü", img: "parkermottekartoru.jpg", desc: "Orta derinlikteki dokuların traksiyonu için tasarlanmış, Parker modelinin daha geniş versiyonu." },
+            { name: "Pederson Vajinal Spekulum", img: "pedersonvajinalspekulum.jpg", desc: "Dar vajinal yapılarda tercih edilen, ince ve düz bıçaklı jinekolojik spekulum." },
+            { name: "Ragnell Ekartörü", img: "ragnellekartoru.jpg", desc: "El ve mikro cerrahide kullanılan çift taraflı narin 'L' uçlu manuel ekartör." },
+            { name: "Ribbon (Malleable) Ekartör", img: "ribbonekartoru.jpg", desc: "Organları korumak için cerrah tarafından istenen şekle sokulabilen esnek metal şerit ekartör." },
+            { name: "Richardson Apendektomi", img: "richardsonapendektomiekartoru.jpg", desc: "Apendektomi kesilerinde dar alan traksiyonu sağlamak için tasarlanmış Richardson modeli." },
+            { name: "Richardson-Eastman", img: "richardsoneastmanekartoru.jpg", desc: "Karın duvarı ve kalın dokuları çekmek için kullanılan çift taraflı, geniş ağızlı ağır ekartör." },
+            { name: "Richardson Ekartörü", img: "richardsonekartoru.jpg", desc: "Karın duvarını geri çekmek için kullanılan cerrahinin en temel saplı manuel ekartörlerinden biri." },
+            { name: "Roux Ekartörü", img: "rouxekartoru.jpg", desc: "Yüzeyel doku ve kas katmanlarını ekarte etmek için kullanılan çift taraflı, 'C' formunda manuel ekartör." },
+            { name: "Sauerbruch Ekartörü", img: "sauerbruchekartoru.jpg", desc: "Göğüs cerrahisinde akciğer veya derin dokuları geri çekmek için kullanılan geniş ağızlı saplı ekartör." },
+            { name: "S Ekartörü", img: "sekartoru.jpg", desc: "Karın ve pelvik cerrahide derin doku traksiyonu sağlayan, karakteristik 'S' formunda çift taraflı ekartör." },
+            { name: "Semb Ekartörü", img: "sembekartoru.jpg", desc: "Torasik cerrahide mediastinal yapıları ekarte etmek için kullanılan kavisli ve uzun gövdeli model." },
+            { name: "Senn Ekartörü", img: "sennekartoru.jpg", desc: "El ve mikro cerrahide kullanılan; bir ucu tırmık, diğer ucu 'L' formunda narin çift taraflı ekartör." },
+            { name: "Simpson Uterin Sond", img: "simpsonuterinsond.jpg", desc: "Jinekolojide rahim derinliğini ölçmek için kullanılan santimetre işaretli, bükülebilir metal kılavuz." },
+            { name: "Sims Uterin Küret", img: "simsuterinkuret.jpg", desc: "Rahim içi doku örneği almak veya kazıma işlemleri için kullanılan halka uçlu keskin cerrahi alet." },
+            { name: "Sisson Sinir Ekartörü", img: "sissonsinirekartoru.jpg", desc: "Nöroşirürjide sinir köklerini ekarte etmek için kullanılan son derece ince uçlu narin alet." },
+            { name: "Slender Pederson Spekulum", img: "slenderpedersonvajinalspekulum.jpg", desc: "Çok dar vajinal yapılarda muayene ve operasyon kolaylığı sağlayan ince bıçaklı spekulum." },
+            { name: "Solvay Spay Hook", img: "solvayspayhook.jpg", desc: "Özellikle uterus yapılarını yakalayıp yüzeye çekmek için kullanılan çengel uçlu traksiyon aleti." },
+            { name: "Van Buren Üretral Dilatatör", img: "vanburenuretraldilator.jpg", desc: "Erkek üretrasını genişletmek için kullanılan, kendine has eğimli ucu olan metal dilatör." },
+            { name: "Volkmann Tırmık Ekartör", img: "volkmanntirmikekartor.jpg", desc: "Kas ve deri altı dokuları çekmek için kullanılan, keskin veya küt pençe uçlu güçlü manuel ekartör." },
+            { name: "Willauer Deaver Ekartörü", img: "willauerdeaverekartoru.jpg", desc: "Derin kavitelerde dokuları ekarte etmek için kullanılan, sapı daha ergonomik tasarlanmış Deaver modeli." },
+            { name: "Wylie Renal Ven Ekartörü", img: "wylierenalvenekartoru.jpg", desc: "Vasküler cerrahide böbrek venlerini görüşü kapatmadan ekarte etmek için tasarlanmış özel açılı alet." },
+            { name: "Wylie Splanknik Ekartörü", img: "wyliesplanchnicekartoru.jpg", desc: "Derin batın operasyonlarında splanknik sinirleri ve dokuları koruyarak geri çekmek için kullanılan model." },
+            { name: "Adson Ekartörü", img: "adsonekartoru.jpg", desc: "Beyin ve omurga cerrahisinde cilt ve kas tabakalarını açık tutmak için kullanılan, mandallı kilit mekanizmasına sahip güçlü otomatik ekartör." },
+            { name: "Alm Ekartörü", img: "almekartoru.jpg", desc: "El ve ayak cerrahisi gibi küçük sahalarda vida mekanizmasıyla uçları istenilen genişlikte sabitleyen kompakt alet." },
+            { name: "Anderson Adson Ekartörü", img: "andersonadsonekartoru.jpg", desc: "Beyin cerrahisinde saçlı deri fleplerini ve derin dokuları daha geniş bir açıyla kavrayan özel kol yapısına sahip otomatik ekartör." },
+            { name: "Balfour Ekartörü", img: "balfourekartoru.jpg", desc: "Büyük karın ameliyatlarında karın duvarını genişçe açan; yan kollar ve merkezi mesane kaşığından oluşan ikonik sistem." },
+            { name: "Barraquer Tel Spekulumu", img: "barraquertelspekulumu.jpg", desc: "Göz cerrahisinde göz kapaklarını açık tutan, göze baskı yapmayan hafif ve esnek tel yapılı otomatik alet." },
+            { name: "Beckman-Adson Ekartörü", img: "beckmanadsonekartoru.jpg", desc: "Adson modelinin gücünü Beckman modelinin menteşeli kollarındaki esneklik ile birleştiren omurga cerrahisi ekartörü." },
+            { name: "Beckman-Eaton Ekartörü", img: "beckmaneatonekartoru.jpg", desc: "Derin omurga operasyonları ve laminektomi için tasarlanmış, geniş 7x7 dişli uçlara sahip ağır hizmet tipi model." },
+            { name: "Beckman Ekartörü", img: "beckmanekartoru.jpg", desc: "Gövdesindeki menteşeler (mafsallar) sayesinde cerrahi sahanın eğimine göre bükülebilen, derin kavitelerde engelsiz görüş sağlayan alet." },
+            { name: "Beckman-Weitlaner Ekartörü", img: "beckmanweitlanerekartoru.jpg", desc: "Standart Weitlaner'ın mafsallı versiyonudur; vücut yüzeyine tam uyum sağlayarak derin sahalarda maksimum manevra sunar." },
+            { name: "Farr Ekartörü", img: "farrekartoru.jpg", desc: "Jinekolojik ve abdominal küçük kesilerde dokuyu nazikçe gergin tutan, kendi kendini sabitleyebilen yaylı otomatik mekanizma." },
+            { name: "Gelpi Ekartör", img: "gelpiekartor.jpg", desc: "Kas ve derin doku tabakalarını keskin uçlarıyla ayırıp sabitleyen, cerrahinin en yaygın kullanılan otomatik ekartörlerinden biri." },
+            { name: "Gelpi Kısa Model", img: "gelpikisamodelekartor.jpg", desc: "Sığ kavitelerde veya pediatrik vakalarda dokuyu ekarte etmek için tasarlanmış daha kısa ve kompakt Gelpi varyasyonu." },
+            { name: "Gelpi Standart Ekartör", img: "gelpistandartekartor.jpg", desc: "Genel cerrahi ve ortopedide her türlü doku derinliğine uygun, geniş açılabilen standart boy Gelpi sistemi." },
+            { name: "Grieshaber Tel Ekartörü", img: "grieshabertelekartoru.jpg", desc: "Mikrocerrahi ve oftalmolojide kullanılan, son derece hafif ve narin yapılı yaylı tel otomatik ekartör." },
+            { name: "Hamburger-Brennan-Mahorner", img: "hamburgerbrennanmahornerekartoru.jpg", desc: "Tiroid ve boyun cerrahisi için tasarlanmış, çok yönlü ayarlanabilir kavisli kollara sahip gelişmiş ekartör sistemi." },
+            { name: "Heiss Ekartörü", img: "heissekartoru.jpg", desc: "Küçük cerrahi sahalarda (el, parmak veya KBB) dokuyu ekarte etmek için kullanılan narin otomatik enstrüman." },
+            { name: "Jansen Ekartörü", img: "jansenekartoru.jpg", desc: "Vida mekanizmasıyla açılan, mastoid cerrahisi veya küçük ortopedik operasyonlar için ideal kompakt otomatik ekartör." },
+            { name: "Johnson Neuroma Ekartör", img: "johnsonneuromaekartor.jpg", desc: "Sinir cerrahisinde dar alanlarda dokuyu sabit tutan, Morton nöroması gibi vakalara özel tasarlanmış otomatik alet." },
+            { name: "Mahorner Tiroid Ekartörü", img: "mahornertiroidekartoru.jpg", desc: "Tiroid operasyonlarında boyun kaslarını simetrik olarak açık tutan geniş çerçeveli profesyonel otomatik sistem." },
+            { name: "Original Henly Popliteal", img: "originalhenlypoplitealekartoru.jpg", desc: "Vasküler cerrahide derin damar yollarını ekarte etmek için kullanılan, değiştirilebilir uç seçenekli profesyonel enstrüman." },
+            { name: "Scalp Contour Ekartörü", img: "scalpcontourekartoru.jpg", desc: "Beyin cerrahisinde kafa derisini kafatası kavislerine uygun şekilde ekarte eden çok dişli otomatik sistem." },
+            { name: "Skin-Self Cilt Ekartörü", img: "skinselfciltekartoru.jpg", desc: "Plastik cerrahide cilt kenarlarını asistan yardımı olmadan gergin tutan küçük otomatik cilt ekartörü." },
+            { name: "Sullivan Abdominal Ekartör", img: "sullivanabdominalekartoru.jpg", desc: "Derin batın ve pelvik cerrahide çok yönlü traksiyon sağlayan, çerçeveli ve ayarlanabilir kanatlı ağır otomatik sistem." },
+            { name: "Weitlaner Ekartörü", img: "weitlanerekartoru.jpg", desc: "Yüzeyel veya orta derinlikteki yara kenarlarını tırmık uçlarıyla açık tutan cerrahinin vazgeçilmez otomatik ekartörü." },
+            { name: "Wexler Bantam Ekartörü", img: "wexlerbantamekartoru.jpg", desc: "Küçük abdominal kesiler veya pediatrik cerrahi için Balfour'un daha küçük ve modüler versiyonu olan sistem." },
+            { name: "Wiltse-Gelpi Ekartör", img: "wiltsegelpiekartor.jpg", desc: "Omurga cerrahisinde derin kas tabakalarını ekarte etmek için özel kavis verilmiş Gelpi varyasyonu." },
+            { name: "Wullstein-Weitlaner", img: "wullsteinweitlanerekartoru.jpg", desc: "Mastoid ve KBB cerrahisi için tasarlanmış, standart Weitlaner'a göre daha küçük uçlu ve narin model." },
+            { name: "Yu-Holtgreve Ekartörü", img: "yuholtgreve.jpg", desc: "Ürolojik ve pelvik cerrahide derin sahalarda dokuyu sabit tutmak için tasarlanmış profesyonel otomatik ekartör sistemi." },
+            { name: "Bağlantı Ekartörleri", img: "bağlantıekartorleri.jpg", desc: "Sabitlenen sistem gövdesine ekartör uçlarını takmak için kullanılan, çok açılı hareket kabiliyeti sağlayan kilitli bağlantı aparatları." },
+            { name: "Bariatric Bileşenler", img: "bariatricbilesenler.jpg", desc: "Obezite cerrahisi için tasarlanmış, ekstra uzun ve geniş yüzeyli, yüksek traksiyona dayanıklı özel ekartör uçları." },
+            { name: "CircuTract Ekartör", img: "circutractekartor.jpg", desc: "Dairesel veya oval çerçeve yapısı sayesinde cerrahi sahayı her yönden eşit şekilde ekarte eden çok yönlü sabit sistem." },
+            { name: "CircuTract Set", img: "circutractset.jpg", desc: "Farklı branşlar için özelleştirilebilen; çerçeve, kollar ve çeşitli ekartör uçlarını içeren tam teşekküllü sabit sistem seti." },
+            { name: "Ekartör Işığı Light Beam", img: "ekartorisigilightbeam.jpg", desc: "Derin kavitelerde doğrudan ekartör ucuna takılarak operasyon sahasını gölgesiz şekilde aydınlatan fiber optik ışık sistemi." },
+            { name: "Sabitleme Demiri", img: "sabitlemedemiri.jpg", desc: "Tüm sabit ekartör sisteminin temelini oluşturan, ameliyat masasının yan raylarına kenetlenerek sistemi taşıyan ana dikey mil." },
+            { name: "Split Wishbone", img: "splitwishbone.jpg", desc: "Çatal formundaki yapısı sayesinde özellikle üst batın ve torasik cerrahide kaburga altı bölgelere mükemmel erişim sağlayan sabit çerçeve." },
+            { name: "Adson Aspiratör Ucu", img: "adsonaspiratorucu.jpg", desc: "Nöroşirürjide kullanılan, parmakla emiş gücünü ayarlamak için kontrol deliği bulunan geniş saplı aspiratör ucu." },
+            { name: "Adson Aspiratör Ucu (Eğri)", img: "adsonaspiratorucuegri.jpg", desc: "Dar ve kavisli alanlarda sıvı tahliyesi sağlamak için tasarlanmış açılı Adson modeli." },
+            { name: "Andrews Infant Aspiratör", img: "andrewsinfantaspiratorucu.jpg", desc: "Pediatrik vakalarda hassas dokulara zarar vermeden sıvı emilimi sağlayan narin uçlu aspiratör." },
+            { name: "Andrews-Pynchon Aspiratör", img: "andrewspynchonaspiratorucu.jpg", desc: "Ağız içi cerrahisinde dokuların aspiratör tarafından emilip tıkanmasını önleyen pencereli uca sahip tasarım." },
+            { name: "Baron Aspiratör Ucu", img: "baronaspiratorucu.jpg", desc: "KBB ve mikrocerrahide kullanılan, ultra ince çaplı ve hassas kontrol imkanı sunan mikro aspiratör ucu." },
+            { name: "Cooley Sump Aspiratör", img: "cooleysumpaspiratorucu.jpg", desc: "Kalp cerrahisinde perikard içindeki kanı, çevre dokuları çekmeden havuzlayarak tahliye eden kafesli uç." },
+            { name: "DeBakey-Adson Koroner", img: "debakeyadsonkoroneraspiratorucu.jpg", desc: "Vasküler cerrahide koroner damar sahalarında sıvı tahliyesi için kullanılan son derece ince ve narin uç." },
+            { name: "DeBakey Aspiratör Ucu", img: "debakeyaspiratorucu.jpg", desc: "Travma yaratmayan uç yapısıyla göğüs ve damar cerrahisinde yaygın kullanılan standart aspiratör." },
+            { name: "DeBakey Işıklı Aspiratör", img: "debakeyisikliaspiratorucu.jpg", desc: "Tahliye işlemi yaparken aynı zamanda derin cerrahi sahayı aydınlatan fiber optik donanımlı aspiratör ucu." },
+            { name: "Ferguson-Frazier Ucu", img: "ferguseonfrazieraspiratorucu.jpg", desc: "Ortopedik ve beyin cerrahisinde kemik tozlarını ve sıvıları çekmek için mandrenli, tıkanmaya dirençli uç." },
+            { name: "Frazier Aspiratör Ucu", img: "frazieraspiratorucu.jpg", desc: "Küçük alanlarda yüksek hassasiyetle emiş sağlayan, sap kısmında kontrol vakum deliği bulunan klasik uç." },
+            { name: "Fukushima Aspiratör Ucu", img: "fukushimaspiratorucu.jpg", desc: "Mikrocerrahide kullanılan, kavisli formu ve özel uç yapısıyla en dar bölgelerde görüşü engellemeden çalışan hassas uç." },
+            { name: "Morse-Andrews Aspiratör", img: "morseandrewsaspiratorucu.jpg", desc: "Yüksek hacimli sıvı tahliyesi gereken abdominal ve torasik vakalar için tasarlanmış geniş kanallı aspiratör." },
+            { name: "Pediatrik Delikli Aspiratör", img: "pediatrikdelikliaspiratorucu.jpg", desc: "Bebek cerrahisinde emiş gücünü dokuya zarar vermeyecek seviyeye indiren çok delikli travma karşıtı uç." },
+            { name: "Poole Abdominal Aspiratör", img: "pooleabdominalaspiratorucu.jpg", desc: "Batın cerrahisinde bağırsakların aspiratöre kaçmasını önleyen delikli dış kılıfa sahip yüksek hacimli emme ucu." },
+            { name: "Rosen Aspiratör Ucu", img: "rosenaspiratorucu.jpg", desc: "Özellikle kulak cerrahisinde mikro alanlardaki sıvı ve debrizlerin tahliyesi için kullanılan çok ince iğne uçlu aspiratör." },
+            { name: "Yankauer Aspiratör Ucu", img: "yankaueraspiratorucu.jpg", desc: "Cerrahinin en temel, ucu ampul şeklinde küt yapılı, doku travmasını önleyen genel amaçlı aspiratör ucu." },
+            { name: "Yankauer Valfli Aspiratör", img: "yankaueraspiratorucuvalfli.jpg", desc: "Emiş gücünü anlık olarak açıp kapatmaya yarayan dahili valf/düğme mekanizmalı Yankauer modeli." },
+            { name: "Guyon Katater Kılavuzu", img: "guyonkataterklavuzu.jpg", desc: "Ürolojide daralmış üretral yollardan katater geçirmek için kullanılan, sağlam yapılı ve eğimli uçlu metal yönlendirici kılavuz." },
+            { name: "Kadın Katateri", img: "Kadınkatateri.jpg", desc: "Kadın anatomisine uygun olarak kısa tasarlanmış, idrar tahliyesi veya örnekleme amacıyla kullanılan metal üretral katater." }
+        ];
+
+        function executeSearch() {
+            const query = document.getElementById('masterSearch').value.trim().toUpperCase();
+            const catView = document.getElementById('categoryContainer');
+            const searchView = document.getElementById('searchWrapper');
+            const resultsBox = document.getElementById('searchResults');
+
+            if (query.length > 0) {
+                catView.style.display = "none";
+                searchView.style.display = "block";
+
+                const filtered = instrumentsDatabase.filter(item => 
+                    item.name.toUpperCase().includes(query)
+                );
+
+                resultsBox.innerHTML = "";
+                if (filtered.length > 0) {
+                    filtered.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = "product-result-card";
+                        card.onclick = () => openModal(item);
+                        card.innerHTML = `<h3>${item.name}</h3>`;
+                        resultsBox.appendChild(card);
+                    });
+                } else {
+                    resultsBox.innerHTML = "<p style='grid-column:1/-1; text-align:center; padding:50px; opacity:0.5;'>Alet bulunamadı...</p>";
+                }
+            } else {
+                catView.style.display = "block";
+                searchView.style.display = "none";
+            }
+        }
+
+        function openModal(item) {
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalDesc').innerText = item.desc;
+            document.getElementById('modalImg').src = 'assets/img/' + item.img;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Makaslar Katalog | Surgery - Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* TEMEL AYARLAR */
+        * { margin: 0; padding: 0; box-sizing: border-box; text-decoration: none; -webkit-font-smoothing: antialiased; }
+        body, html { height: 100%; width: 100%; font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e3a8a 100%); background-attachment: fixed; color: white; overflow-x: hidden; }
+
+        /* HEADER */
+        .top-header { width: 100%; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.5); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .back-btn { color: #fff; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; }
+
+        /* ANA DÜZEN */
+        .main-layout { display: flex; max-width: 1100px; margin: 30px auto; padding: 0 20px 140px 20px; gap: 30px; }
+
+        /* SIDEBAR & SEARCH */
+        .sidebar { flex: 0 0 280px; display: flex; flex-direction: column; gap: 15px; }
+        .search-box { background: rgba(255, 255, 255, 0.1); border: 2px solid #ef4444; border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 10px; }
+        .search-box input { background: transparent; border: none; color: white; width: 100%; outline: none; font-family: inherit; }
+        #resultsList { background: rgba(255, 255, 255, 0.05); border-radius: 15px; overflow: hidden; display: none; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .result-item { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.2s; font-size: 0.8rem; }
+        .result-item:hover { background: rgba(239, 68, 68, 0.2); }
+
+        /* LİSTE TASARIMI */
+        .content-area { flex: 1; }
+        .list-card { background: rgba(255, 255, 255, 0.05); border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.1); overflow: hidden; }
+        .product-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.3s; }
+        .product-row:hover { background: rgba(255, 255, 255, 0.08); }
+        .product-row h3 { font-size: 0.95rem; font-weight: 600; }
+        .info-badge { width: 22px; height: 22px; background: rgba(239, 68, 68, 0.2); color: #ef4444; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: 800; }
+
+        /* GENİŞ POP-UP (MODAL) SİSTEMİ */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.92); backdrop-filter: blur(20px); 
+            display: none; justify-content: center; align-items: center; 
+            z-index: 1000; padding: 15px;
+        }
+
+        .modal-content { 
+            background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.2); 
+            width: 95%; max-width: 900px; /* GENİŞLİK ARTIRILDI */
+            max-height: 90vh; border-radius: 40px; padding: 40px; 
+            text-align: center; position: relative; overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content img { 
+            width: 100%; max-width: 700px; background: white; 
+            border-radius: 25px; padding: 20px; margin-bottom: 25px; 
+            max-height: 450px; object-fit: contain; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-content h2 { color: #ef4444; margin-bottom: 15px; font-size: 1.8rem; font-weight: 800; text-transform: uppercase; }
+
+        .modal-content p { 
+            color: #f1f5f9; font-size: 1.1rem; line-height: 1.7; 
+            text-align: left; background: rgba(15, 23, 42, 0.5); 
+            padding: 25px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .close-btn { 
+            margin-top: 30px; padding: 15px 55px; background: #fff; 
+            color: #000; border-radius: 100px; font-weight: 900; 
+            cursor: pointer; display: inline-block; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .close-btn:hover { background: #ef4444; color: white; transform: scale(1.05); }
+
+        /* FOOTER */
+        .nt-footer { position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.85); padding: 15px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
+        .mini-logo { width: 38px; height: 38px; background: #fff; border-radius: 10px; color: #000; display: flex; justify-content: center; align-items: center; font-weight: 800; }
+
+        @media (max-width: 850px) { .main-layout { flex-direction: column; } .sidebar { flex: none; width: 100%; } .modal-content { padding: 25px; } }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <a href="aletler.html" class="back-btn">← GERİ</a>
+        <div style="font-weight: 800; font-size: 0.9rem; letter-spacing: 1px;">MAKASLAR</div>
+        <div style="width: 40px;"></div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="megaSearch" onkeyup="smartSearch()" placeholder="Makas ara...">
+            </div>
+            <div id="resultsList"></div>
+        </aside>
+        <main class="content-area">
+            <div class="list-card" id="mainList"></div>
+        </main>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modalImg" src="" alt="">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDesc"></p>
+            <div class="close-btn" onclick="closeModal()">KAPAT</div>
+        </div>
+    </div>
+
+    <div class="nt-footer">
+        <div class="mini-logo">NT</div>
+        <p style="font-size:0.55rem; color:#888; margin-top:5px;">Şükrü ERDEM © 2026</p>
+    </div>
+
+    <script>
+        const makaslar = [
+            { name: "Alçı Makası", img: "alcimakasi.jpg", desc: "Alçı kesimi için tasarlanmış, 20 cm (7-7/8\") uzunluğunda ağır hizmet makası." },
+            { name: "Bandaj Makası", img: "bandajmakasi.jpg", desc: "19,5 cm (7-3/4\") uzunluğunda, bir büyük parmak yüzüğü ile ergonomik tutuş sağlayan pansuman makası." },
+            { name: "Cerrahi Makaslar", img: "cerrahimakas.jpg", desc: "Düz ve kavisli seçenekleri mevcuttur (12,5 cm - 18 cm). Genel doku kesimi için standart alet." },
+            { name: "Cerrahi Makas - 2", img: "cerrahimakas2.jpg", desc: "İnce diseksiyonlar için uygun sivri/küt bıçak yapısına sahip model." },
+            { name: "Cerrahi Makas - 3", img: "cerrahimakas3.jpg", desc: "Hassas kavisli yapısı ile doku katmanları arasında rahat ilerleme sağlar." },
+            { name: "Cerrahi Makas - 4 (TC)", img: "cerrahimakas4.jpg", desc: "Tungsten Karbür (TC) uçlu, altın saplı, uzun ömürlü keskinlik sunan model." },
+            { name: "Cerrahi Makas - 5", img: "cerrahimakas5.jpg", desc: "Düz yapılı, standart cerrahi müdahaleler için dayanıklı makas." },
+            { name: "Cooley Arteriyotomi Makası", img: "cooleymakas.jpg", desc: "Kalp damar cerrahisinde arterlerin boyuna açılması için 90° veya 125° açılı hassas makas." },
+            { name: "Destekli Makas", img: "desteklimakas.jpg", desc: "21 cm (8-1/4\") uzunluğunda, sert materyalleri kesmek için güç destekli mekanizma." },
+            { name: "Herkül Alçı Makası", img: "herkulalcimakasi.jpg", desc: "19 cm (7-1/2\") uzunluğunda, tek bıçağı tırtıklı, zorlu alçı ve materyaller için ekstra güçlü." },
+            { name: "Hill Stitch Makasları", img: "hillstitchmakas.jpg", desc: "11 cm (4-3/8\") uzunluğunda, kavisli ucuyla dikiş alma işlemlerinde yüksek kontrol sağlar." },
+            { name: "Maki Makası", img: "makimakasi.jpg", desc: "14.5 cm (5-3/4\") uzunluğunda, özel tırtıklı ve açılı yapısıyla bandaj ve benzeri materyaller için." },
+            { name: "Mayo Makas", img: "mayomakas.jpg", desc: "14,5 cm ve 19 cm seçenekleri mevcuttur. Düz, tırtıklı bıçak yapısıyla faysa ve ağır doku kesimi için idealdir." },
+            { name: "Moleskin Makası", img: "moleskinmakas.jpg", desc: "Düz (18 cm) ve Kavisli (19 cm) seçenekleri mevcuttur. Bir bıçağı tırtıklı yapısıyla kaymayı önler." },
+            { name: "Sütur Alma Makası", img: "suturalmamakasi.jpg", desc: "14 cm (5-1/2\") uzunluğunda, dikiş iplerini güvenle yakalayıp kesmek için özel çentikli uç." },
+            { name: "Umblikal Makas", img: "umblikalmakas.jpg", desc: "Geniş ve kavisli bıçak yapısı ile doğum sonrası göbek kordonunu kaydırmadan güvenle keser." },
+            { name: "Yüksek Seviye Bandaj Makası", img: "yuksekseviyebandajmakasi.jpg", desc: "14 cm (5-1/2\") uzunluğunda, yanlardan açılı sapları ve tek tırtıklı bıçağı ile profesyonel kullanım." }
+        ];
+
+        function initList() {
+            const list = document.getElementById('mainList');
+            makaslar.sort((a, b) => a.name.localeCompare(b.name)).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'product-row';
+                row.onclick = () => openModal(item);
+                row.innerHTML = `<h3>${item.name}</h3><div class="info-badge">i</div>`;
+                list.appendChild(row);
+            });
+        }
+
+        function smartSearch() {
+            let input = document.getElementById('megaSearch').value.toUpperCase();
+            let resultsDiv = document.getElementById('resultsList');
+            let mainList = document.getElementById('mainList');
+            resultsDiv.innerHTML = ''; mainList.style.opacity = (input.length < 2) ? "1" : "0.3";
+            if (input.length < 2) { resultsDiv.style.display = 'none'; return; }
+            let filtered = makaslar.filter(item => item.name.toUpperCase().includes(input));
+            if (filtered.length > 0) {
+                resultsDiv.style.display = 'block';
+                filtered.forEach(item => {
+                    let div = document.createElement('div');
+                    div.className = 'result-item'; div.innerHTML = item.name;
+                    div.onclick = () => openModal(item); resultsDiv.appendChild(div);
+                });
+            } else { resultsDiv.style.display = 'none'; }
+        }
+
+        function openModal(item) {
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalDesc').innerText = item.desc;
+            document.getElementById('modalImg').src = 'assets/img/' + item.img;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+
+        initList();
+    </script>
+</body>
+</html>

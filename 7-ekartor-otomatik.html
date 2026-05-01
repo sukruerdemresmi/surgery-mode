@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otomatik Ekartörler | Surgery - Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* TEMEL AYARLAR */
+        * { margin: 0; padding: 0; box-sizing: border-box; text-decoration: none; -webkit-font-smoothing: antialiased; }
+        body, html { height: 100%; width: 100%; font-family: 'Inter', sans-serif; background: #0f172a; color: white; overflow-x: hidden; }
+
+        /* HEADER */
+        .top-header { width: 100%; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.5); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .back-btn { color: #fff; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; }
+
+        /* ANA DÜZEN */
+        .main-layout { display: flex; max-width: 1100px; margin: 30px auto; padding: 0 20px 140px 20px; gap: 30px; }
+
+        /* SIDEBAR & SEARCH */
+        .sidebar { flex: 0 0 280px; display: flex; flex-direction: column; gap: 15px; }
+        .search-box { background: rgba(255, 255, 255, 0.1); border: 2px solid #f97316; /* Otomatik Ekartör Turuncu Tema */ border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 10px; }
+        .search-box input { background: transparent; border: none; color: white; width: 100%; outline: none; font-family: inherit; }
+        #resultsList { background: rgba(255, 255, 255, 0.05); border-radius: 15px; overflow: hidden; display: none; border: 1px solid rgba(255, 255, 255, 0.1); max-height: 400px; overflow-y: auto; }
+        .result-item { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.2s; font-size: 0.8rem; }
+        .result-item:hover { background: rgba(249, 115, 22, 0.2); }
+
+        /* LİSTE TASARIMI */
+        .content-area { flex: 1; }
+        .list-card { background: rgba(255, 255, 255, 0.05); border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.1); overflow: hidden; }
+        .product-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.3s; }
+        .product-row:hover { background: rgba(255, 255, 255, 0.08); }
+        .product-row h3 { font-size: 0.9rem; font-weight: 600; }
+        .info-badge { width: 22px; height: 22px; background: rgba(249, 115, 22, 0.2); color: #f97316; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: 800; }
+
+        /* DEV POP-UP (MODAL) SİSTEMİ */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.94); backdrop-filter: blur(20px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
+        .modal-content { background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(255,255,255,0.2); width: 95%; max-width: 900px; max-height: 90vh; border-radius: 40px; padding: 40px; text-align: center; position: relative; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .modal-content img { width: 100%; max-width: 750px; background: white; border-radius: 25px; padding: 25px; margin-bottom: 25px; max-height: 450px; object-fit: contain; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .modal-content h2 { color: #f97316; margin-bottom: 15px; font-size: 1.8rem; font-weight: 800; text-transform: uppercase; }
+        .modal-content p { color: #f1f5f9; font-size: 1.1rem; line-height: 1.7; text-align: left; background: rgba(15, 23, 42, 0.5); padding: 25px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .close-btn { margin-top: 30px; padding: 15px 55px; background: #fff; color: #000; border-radius: 100px; font-weight: 900; cursor: pointer; display: inline-block; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .close-btn:hover { background: #f97316; color: white; transform: scale(1.05); }
+
+        .nt-footer { position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.85); padding: 15px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
+        .mini-logo { width: 38px; height: 38px; background: #fff; border-radius: 10px; color: #000; display: flex; justify-content: center; align-items: center; font-weight: 800; }
+        @media (max-width: 850px) { .main-layout { flex-direction: column; } .sidebar { flex: none; width: 100%; } .modal-content { padding: 25px; } }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <a href="aletler.html" class="back-btn">← GERİ</a>
+        <div style="font-weight: 800; font-size: 0.9rem; letter-spacing: 1px;">7-EKARTOR OTOMATİK</div>
+        <div style="width: 40px;"></div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="megaSearch" onkeyup="smartSearch()" placeholder="Otomatik ekartör ara...">
+            </div>
+            <div id="resultsList"></div>
+        </aside>
+        <main class="content-area">
+            <div class="list-card" id="mainList"></div>
+        </main>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modalImg" src="" alt="">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDesc"></p>
+            <div class="close-btn" onclick="closeModal()">KAPAT</div>
+        </div>
+    </div>
+
+    <div class="nt-footer">
+        <div class="mini-logo">NT</div>
+        <p style="font-size:0.55rem; color:#888; margin-top:5px;">Şükrü ERDEM © 2026</p>
+    </div>
+
+    <script>
+        const enstrumanlar = [
+            { name: "Adson Ekartörü", img: "adsonekartoru.jpg", desc: "Beyin ve omurga cerrahisinde cilt ve kas tabakalarını açık tutmak için kullanılan, mandallı kilit mekanizmasına sahip güçlü otomatik ekartör." },
+            { name: "Alm Ekartörü", img: "almekartoru.jpg", desc: "El ve ayak cerrahisi gibi küçük sahalarda vida mekanizmasıyla uçları istenilen genişlikte sabitleyen kompakt alet." },
+            { name: "Anderson Adson Ekartörü", img: "andersonadsonekartoru.jpg", desc: "Beyin cerrahisinde saçlı deri fleplerini ve derin dokuları daha geniş bir açıyla kavrayan özel kol yapısına sahip otomatik ekartör." },
+            { name: "Balfour Ekartörü", img: "balfourekartoru.jpg", desc: "Büyük karın ameliyatlarında karın duvarını genişçe açan; yan kollar ve merkezi mesane kaşığından oluşan ikonik sistem." },
+            { name: "Barraquer Tel Spekulumu", img: "barraquertelspekulumu.jpg", desc: "Göz cerrahisinde göz kapaklarını açık tutan, göze baskı yapmayan hafif ve esnek tel yapılı otomatik alet." },
+            { name: "Beckman-Adson Ekartörü", img: "beckmanadsonekartoru.jpg", desc: "Adson modelinin gücünü Beckman modelinin menteşeli kollarındaki esneklik ile birleştiren omurga cerrahisi ekartörü." },
+            { name: "Beckman-Eaton Ekartörü", img: "beckmaneatonekartoru.jpg", desc: "Derin omurga operasyonları ve laminektomi için tasarlanmış, geniş 7x7 dişli uçlara sahip ağır hizmet tipi model." },
+            { name: "Beckman Ekartörü", img: "beckmanekartoru.jpg", desc: "Gövdesindeki menteşeler (mafsallar) sayesinde cerrahi sahanın eğimine göre bükülebilen, derin kavitelerde engelsiz görüş sağlayan alet." },
+            { name: "Beckman-Weitlaner Ekartörü", img: "beckmanweitlanerekartoru.jpg", desc: "Standart Weitlaner'ın mafsallı versiyonudur; vücut yüzeyine tam uyum sağlayarak derin sahalarda maksimum manevra sunar." },
+            { name: "Farr Ekartörü", img: "farrekartoru.jpg", desc: "Jinekolojik ve abdominal küçük kesilerde dokuyu nazikçe gergin tutan, kendi kendini sabitleyebilen yaylı otomatik mekanizma." },
+            { name: "Gelpi Ekartör", img: "gelpiekartor.jpg", desc: "Kas ve derin doku tabakalarını keskin uçlarıyla ayırıp sabitleyen, cerrahinin en yaygın kullanılan otomatik ekartörlerinden biri." },
+            { name: "Gelpi Kısa Model", img: "gelpikisamodelekartor.jpg", desc: "Sığ kavitelerde veya pediatrik vakalarda dokuyu ekarte etmek için tasarlanmış daha kısa ve kompakt Gelpi varyasyonu." },
+            { name: "Gelpi Standart Ekartör", img: "gelpistandartekartor.jpg", desc: "Genel cerrahi ve ortopedide her türlü doku derinliğine uygun, geniş açılabilen standart boy Gelpi sistemi." },
+            { name: "Grieshaber Tel Ekartörü", img: "grieshabertelekartoru.jpg", desc: "Mikrocerrahi ve oftalmolojide kullanılan, son derece hafif ve narin yapılı yaylı tel otomatik ekartör." },
+            { name: "Hamburger-Brennan-Mahorner", img: "hamburgerbrennanmahornerekartoru.jpg", desc: "Tiroid ve boyun cerrahisi için tasarlanmış, çok yönlü ayarlanabilir kavisli kollara sahip gelişmiş ekartör sistemi." },
+            { name: "Heiss Ekartörü", img: "heissekartoru.jpg", desc: "Küçük cerrahi sahalarda (el, parmak veya KBB) dokuyu ekarte etmek için kullanılan narin otomatik enstrüman." },
+            { name: "Jansen Ekartörü", img: "jansenekartoru.jpg", desc: "Vida mekanizmasıyla açılan, mastoid cerrahisi veya küçük ortopedik operasyonlar için ideal kompakt otomatik ekartör." },
+            { name: "Johnson Neuroma Ekartör", img: "johnsonneuromaekartor.jpg", desc: "Sinir cerrahisinde dar alanlarda dokuyu sabit tutan, Morton nöroması gibi vakalara özel tasarlanmış otomatik alet." },
+            { name: "Mahorner Tiroid Ekartörü", img: "mahornertiroidekartoru.jpg", desc: "Tiroid operasyonlarında boyun kaslarını simetrik olarak açık tutan geniş çerçeveli profesyonel otomatik sistem." },
+            { name: "Original Henly Popliteal", img: "originalhenlypoplitealekartoru.jpg", desc: "Vasküler cerrahide derin damar yollarını ekarte etmek için kullanılan, değiştirilebilir uç seçenekli profesyonel enstrüman." },
+            { name: "Scalp Contour Ekartörü", img: "scalpcontourekartoru.jpg", desc: "Beyin cerrahisinde kafa derisini kafatası kavislerine uygun şekilde ekarte eden çok dişli otomatik sistem." },
+            { name: "Skin-Self Cilt Ekartörü", img: "skinselfciltekartoru.jpg", desc: "Plastik cerrahide cilt kenarlarını asistan yardımı olmadan gergin tutan küçük otomatik cilt ekartörü." },
+            { name: "Sullivan Abdominal Ekartör", img: "sullivanabdominalekartoru.jpg", desc: "Derin batın ve pelvik cerrahide çok yönlü traksiyon sağlayan, çerçeveli ve ayarlanabilir kanatlı ağır otomatik sistem." },
+            { name: "Weitlaner Ekartörü", img: "weitlanerekartoru.jpg", desc: "Yüzeyel veya orta derinlikteki yara kenarlarını tırmık uçlarıyla açık tutan cerrahinin vazgeçilmez otomatik ekartörü." },
+            { name: "Wexler Bantam Ekartörü", img: "wexlerbantamekartoru.jpg", desc: "Küçük abdominal kesiler veya pediatrik cerrahi için Balfour'un daha küçük ve modüler versiyonu olan sistem." },
+            { name: "Wiltse-Gelpi Ekartör", img: "wiltsegelpiekartor.jpg", desc: "Omurga cerrahisinde derin kas tabakalarını ekarte etmek için özel kavis verilmiş Gelpi varyasyonu." },
+            { name: "Wullstein-Weitlaner", img: "wullsteinweitlanerekartoru.jpg", desc: "Mastoid ve KBB cerrahisi için tasarlanmış, standart Weitlaner'a göre daha küçük uçlu ve narin model." },
+            { name: "Yu-Holtgreve Ekartörü", img: "yuholtgreve.jpg", desc: "Ürolojik ve pelvik cerrahide derin sahalarda dokuyu sabit tutmak için tasarlanmış profesyonel otomatik ekartör sistemi." }
+        ];
+
+        function initList() {
+            const list = document.getElementById('mainList');
+            enstrumanlar.sort((a, b) => a.name.localeCompare(b.name, 'tr')).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'product-row';
+                row.onclick = () => openModal(item);
+                row.innerHTML = `<h3>${item.name}</h3><div class="info-badge">i</div>`;
+                list.appendChild(row);
+            });
+        }
+
+        function smartSearch() {
+            let input = document.getElementById('megaSearch').value.toUpperCase();
+            let resultsDiv = document.getElementById('resultsList');
+            let mainList = document.getElementById('mainList');
+            resultsDiv.innerHTML = ''; mainList.style.opacity = (input.length < 2) ? "1" : "0.3";
+            if (input.length < 2) { resultsDiv.style.display = 'none'; return; }
+            let filtered = enstrumanlar.filter(item => item.name.toUpperCase().includes(input));
+            if (filtered.length > 0) {
+                resultsDiv.style.display = 'block';
+                filtered.forEach(item => {
+                    let div = document.createElement('div');
+                    div.className = 'result-item'; div.innerHTML = item.name;
+                    div.onclick = () => openModal(item); resultsDiv.appendChild(div);
+                });
+            } else { resultsDiv.style.display = 'none'; }
+        }
+
+        function openModal(item) {
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalDesc').innerText = item.desc;
+            document.getElementById('modalImg').src = 'assets/img/' + item.img;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+
+        initList();
+    </script>
+</body>
+</html>

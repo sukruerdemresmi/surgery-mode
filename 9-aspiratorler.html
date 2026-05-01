@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aspiratörler Katalog | Surgery - Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* TEMEL AYARLAR */
+        * { margin: 0; padding: 0; box-sizing: border-box; text-decoration: none; -webkit-font-smoothing: antialiased; }
+        body, html { height: 100%; width: 100%; font-family: 'Inter', sans-serif; background: #0f172a; color: white; overflow-x: hidden; }
+
+        /* HEADER */
+        .top-header { width: 100%; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.5); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .back-btn { color: #fff; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; }
+
+        /* ANA DÜZEN */
+        .main-layout { display: flex; max-width: 1100px; margin: 30px auto; padding: 0 20px 140px 20px; gap: 30px; }
+
+        /* SIDEBAR & SEARCH */
+        .sidebar { flex: 0 0 280px; display: flex; flex-direction: column; gap: 15px; }
+        .search-box { background: rgba(255, 255, 255, 0.1); border: 2px solid #22c55e; /* Aspiratörler Yeşil Tema */ border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 10px; }
+        .search-box input { background: transparent; border: none; color: white; width: 100%; outline: none; font-family: inherit; }
+        #resultsList { background: rgba(255, 255, 255, 0.05); border-radius: 15px; overflow: hidden; display: none; border: 1px solid rgba(255, 255, 255, 0.1); max-height: 400px; overflow-y: auto; }
+        .result-item { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.2s; font-size: 0.8rem; }
+        .result-item:hover { background: rgba(34, 197, 94, 0.2); }
+
+        /* LİSTE TASARIMI */
+        .content-area { flex: 1; }
+        .list-card { background: rgba(255, 255, 255, 0.05); border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.1); overflow: hidden; }
+        .product-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.3s; }
+        .product-row:hover { background: rgba(255, 255, 255, 0.08); }
+        .product-row h3 { font-size: 0.9rem; font-weight: 600; }
+        .info-badge { width: 22px; height: 22px; background: rgba(34, 197, 94, 0.2); color: #22c55e; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: 800; }
+
+        /* DEV POP-UP (MODAL) SİSTEMİ */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.94); backdrop-filter: blur(20px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
+        .modal-content { background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(255,255,255,0.2); width: 95%; max-width: 900px; max-height: 90vh; border-radius: 40px; padding: 40px; text-align: center; position: relative; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .modal-content img { width: 100%; max-width: 750px; background: white; border-radius: 25px; padding: 25px; margin-bottom: 25px; max-height: 450px; object-fit: contain; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .modal-content h2 { color: #22c55e; margin-bottom: 15px; font-size: 1.8rem; font-weight: 800; text-transform: uppercase; }
+        .modal-content p { color: #f1f5f9; font-size: 1.1rem; line-height: 1.7; text-align: left; background: rgba(15, 23, 42, 0.5); padding: 25px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .close-btn { margin-top: 30px; padding: 15px 55px; background: #fff; color: #000; border-radius: 100px; font-weight: 900; cursor: pointer; display: inline-block; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .close-btn:hover { background: #22c55e; color: white; transform: scale(1.05); }
+
+        .nt-footer { position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.85); padding: 15px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
+        .mini-logo { width: 38px; height: 38px; background: #fff; border-radius: 10px; color: #000; display: flex; justify-content: center; align-items: center; font-weight: 800; }
+        @media (max-width: 850px) { .main-layout { flex-direction: column; } .sidebar { flex: none; width: 100%; } .modal-content { padding: 25px; } }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <a href="aletler.html" class="back-btn">← GERİ</a>
+        <div style="font-weight: 800; font-size: 0.9rem; letter-spacing: 1px;">9-ASPİRATORLER</div>
+        <div style="width: 40px;"></div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="megaSearch" onkeyup="smartSearch()" placeholder="Aspiratör ucu ara...">
+            </div>
+            <div id="resultsList"></div>
+        </aside>
+        <main class="content-area">
+            <div class="list-card" id="mainList"></div>
+        </main>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modalImg" src="" alt="">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDesc"></p>
+            <div class="close-btn" onclick="closeModal()">KAPAT</div>
+        </div>
+    </div>
+
+    <div class="nt-footer">
+        <div class="mini-logo">NT</div>
+        <p style="font-size:0.55rem; color:#888; margin-top:5px;">Şükrü ERDEM © 2026</p>
+    </div>
+
+    <script>
+        const enstrumanlar = [
+            { name: "Adson Aspiratör Ucu", img: "adsonaspiratorucu.jpg", desc: "Nöroşirürjide kullanılan, parmakla emiş gücünü ayarlamak için kontrol deliği bulunan geniş saplı aspiratör ucu." },
+            { name: "Adson Aspiratör Ucu (Eğri)", img: "adsonaspiratorucuegri.jpg", desc: "Dar ve kavisli alanlarda sıvı tahliyesi sağlamak için tasarlanmış açılı Adson modeli." },
+            { name: "Andrews Infant Aspiratör", img: "andrewsinfantaspiratorucu.jpg", desc: "Pediatrik vakalarda hassas dokulara zarar vermeden sıvı emilimi sağlayan narin uçlu aspiratör." },
+            { name: "Andrews-Pynchon Aspiratör", img: "andrewspynchonaspiratorucu.jpg", desc: "Ağız içi cerrahisinde dokuların aspiratör tarafından emilip tıkanmasını önleyen pencereli uca sahip tasarım." },
+            { name: "Baron Aspiratör Ucu", img: "baronaspiratorucu.jpg", desc: "KBB ve mikrocerrahide kullanılan, ultra ince çaplı ve hassas kontrol imkanı sunan mikro aspiratör ucu." },
+            { name: "Cooley Sump Aspiratör", img: "cooleysumpaspiratorucu.jpg", desc: "Kalp cerrahisinde perikard içindeki kanı, çevre dokuları çekmeden havuzlayarak tahliye eden kafesli uç." },
+            { name: "DeBakey-Adson Koroner", img: "debakeyadsonkoroneraspiratorucu.jpg", desc: "Vasküler cerrahide koroner damar sahalarında sıvı tahliyesi için kullanılan son derece ince ve narin uç." },
+            { name: "DeBakey Aspiratör Ucu", img: "debakeyaspiratorucu.jpg", desc: "Travma yaratmayan uç yapısıyla göğüs ve damar cerrahisinde yaygın kullanılan standart aspiratör." },
+            { name: "DeBakey Işıklı Aspiratör", img: "debakeyisikliaspiratorucu.jpg", desc: "Tahliye işlemi yaparken aynı zamanda derin cerrahi sahayı aydınlatan fiber optik donanımlı aspiratör ucu." },
+            { name: "Ferguson-Frazier Ucu", img: "ferguseonfrazieraspiratorucu.jpg", desc: "Ortopedik ve beyin cerrahisinde kemik tozlarını ve sıvıları çekmek için mandrenli, tıkanmaya dirençli uç." },
+            { name: "Frazier Aspiratör Ucu", img: "frazieraspiratorucu.jpg", desc: "Küçük alanlarda yüksek hassasiyetle emiş sağlayan, sap kısmında kontrol vakum deliği bulunan klasik uç." },
+            { name: "Fukushima Aspiratör Ucu", img: "fukushimaspiratorucu.jpg", desc: "Mikrocerrahide kullanılan, kavisli formu ve özel uç yapısıyla en dar bölgelerde görüşü engellemeden çalışan hassas uç." },
+            { name: "Morse-Andrews Aspiratör", img: "morseandrewsaspiratorucu.jpg", desc: "Yüksek hacimli sıvı tahliyesi gereken abdominal ve torasik vakalar için tasarlanmış geniş kanallı aspiratör." },
+            { name: "Pediatrik Delikli Aspiratör", img: "pediatrikdelikliaspiratorucu.jpg", desc: "Bebek cerrahisinde emiş gücünü dokuya zarar vermeyecek seviyeye indiren çok delikli travma karşıtı uç." },
+            { name: "Poole Abdominal Aspiratör", img: "pooleabdominalaspiratorucu.jpg", desc: "Batın cerrahisinde bağırsakların aspiratöre kaçmasını önleyen delikli dış kılıfa sahip yüksek hacimli emme ucu." },
+            { name: "Rosen Aspiratör Ucu", img: "rosenaspiratorucu.jpg", desc: "Özellikle kulak cerrahisinde mikro alanlardaki sıvı ve debrizlerin tahliyesi için kullanılan çok ince iğne uçlu aspiratör." },
+            { name: "Yankauer Aspiratör Ucu", img: "yankaueraspiratorucu.jpg", desc: "Cerrahinin en temel, ucu ampul şeklinde küt yapılı, doku travmasını önleyen genel amaçlı aspiratör ucu." },
+            { name: "Yankauer Valfli Aspiratör", img: "yankaueraspiratorucuvalfli.jpg", desc: "Emiş gücünü anlık olarak açıp kapatmaya yarayan dahili valf/düğme mekanizmalı Yankauer modeli." }
+        ];
+
+        function initList() {
+            const list = document.getElementById('mainList');
+            enstrumanlar.sort((a, b) => a.name.localeCompare(b.name, 'tr')).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'product-row';
+                row.onclick = () => openModal(item);
+                row.innerHTML = `<h3>${item.name}</h3><div class="info-badge">i</div>`;
+                list.appendChild(row);
+            });
+        }
+
+        function smartSearch() {
+            let input = document.getElementById('megaSearch').value.toUpperCase();
+            let resultsDiv = document.getElementById('resultsList');
+            let mainList = document.getElementById('mainList');
+            resultsDiv.innerHTML = ''; mainList.style.opacity = (input.length < 2) ? "1" : "0.3";
+            if (input.length < 2) { resultsDiv.style.display = 'none'; return; }
+            let filtered = enstrumanlar.filter(item => item.name.toUpperCase().includes(input));
+            if (filtered.length > 0) {
+                resultsDiv.style.display = 'block';
+                filtered.forEach(item => {
+                    let div = document.createElement('div');
+                    div.className = 'result-item'; div.innerHTML = item.name;
+                    div.onclick = () => openModal(item); resultsDiv.appendChild(div);
+                });
+            } else { resultsDiv.style.display = 'none'; }
+        }
+
+        function openModal(item) {
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalDesc').innerText = item.desc;
+            document.getElementById('modalImg').src = 'assets/img/' + item.img;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+
+        initList();
+    </script>
+</body>
+</html>

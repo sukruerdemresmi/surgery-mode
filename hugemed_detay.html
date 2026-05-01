@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analiz | Hugemed Fleksibl URS</title>
+    <style>
+        :root {
+            --hugemed-blue: #0056b3;
+            --dark-navy: #0f172a;
+            --white: #ffffff;
+            --hotspot-red: #ff3333;
+        }
+
+        body { 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            margin: 0; 
+            background: #fcfdfe; 
+            color: var(--dark-navy); 
+            overflow-x: hidden; 
+        }
+
+        /* Üst Menü */
+        header { 
+            background: var(--white); 
+            padding: 15px 30px; 
+            border-bottom: 2px solid #e2e8f0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02); 
+        }
+
+        .nav-group { display: flex; align-items: center; gap: 20px; }
+
+        .back-btn { 
+            text-decoration: none; 
+            color: #64748b; 
+            font-weight: bold; 
+            font-size: 0.85rem; 
+            border: 1px solid #e2e8f0; 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            transition: 0.3s;
+        }
+        .back-btn:hover { background: #f1f5f9; color: var(--hugemed-blue); }
+
+        .endovizyon-nav-link {
+            text-decoration: none;
+            color: var(--hugemed-blue);
+            font-family: 'Trebuchet MS', sans-serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: 3px solid var(--hugemed-blue);
+            padding: 0 5px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        .endovizyon-nav-link:hover { background: var(--hugemed-blue); color: white; border-radius: 4px; }
+
+        .brand-logo-header { max-height: 40px; }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; text-align: center; }
+
+        h1 { color: var(--hugemed-blue); font-size: 2.3rem; margin-bottom: 5px; }
+        .sub-title { color: #64748b; margin-bottom: 30px; font-style: italic; }
+
+        /* --- İNTERAKTİF HARİTA SİSTEMİ (KRİTİK DÜZELTME) --- */
+        .interactive-map-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px; /* Resmin orijinal genişliğine yakın */
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 86, 179, 0.08);
+            border: 1px solid #f1f5f9;
+            line-height: 0; /* Resim altındaki boşluğu siler */
+        }
+
+        .main-device-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 20px;
+        }
+
+        /* Sıcak Noktalar */
+        .hotspot {
+            position: absolute;
+            width: 3%; /* Yüzdesel genişlik */
+            padding-bottom: 3%; /* Yüzdesel yükseklik (Kare olması için) */
+            background: rgba(255, 51, 51, 0.2); 
+            border: 2px solid var(--hotspot-red);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            transform: translate(-50%, -50%); /* Tam merkeze oturtur */
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(255, 51, 51, 0.7); }
+            70% { transform: translate(-50%, -50%) scale(1.3); box-shadow: 0 0 0 10px rgba(255, 51, 51, 0); }
+            100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(255, 51, 51, 0); }
+        }
+
+        /* --- YENİ NOKTA KONUMLARI (Görseldeki Kırmızı İşaretlere Tam Uyumlu) --- */
+        #point-distal  { top: 10%; left: 29.5%; }    /* Distal Uç */
+        #point-channel { top: 21%; left: 67%; }      /* Çalışma Kanalı Girişi */
+        #point-btn-top { top: 3.5%; left: 83.5%; }   /* Üst Buton (Mavi kapak) */
+        #point-btn-side{ top: 14%; left: 88%; }      /* Yan Angülasyon Kolu */
+
+        /* Pop-up (Modal) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.is-open { display: flex; opacity: 1; }
+
+        .modal-content {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.4s ease;
+            border-top: 10px solid var(--hugemed-blue);
+        }
+        .modal.is-open .modal-content { transform: translateY(0); }
+
+        .modal-img { width: 100%; height: 240px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; background: #f8fafc; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 35px; cursor: pointer; color: #cbd5e1; line-height: 1; }
+        .close-modal:hover { color: var(--hugemed-blue); }
+
+        #modalTitle { color: var(--hugemed-blue); margin-bottom: 12px; font-size: 1.8rem; font-weight: 800; }
+        #modalDesc { font-size: 1.1rem; color: #475569; line-height: 1.7; margin: 0; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav-group">
+        <a href="c2-flex-urs.html" class="back-btn">← GERİ</a>
+        <a href="hugemed_endovizyon.html" class="endovizyon-nav-link">ENDOVİZYON</a>
+    </div>
+    <img src="assets/img/hugemed-logo.jpg" alt="Hugemed Logo" class="brand-logo-header">
+</header>
+
+<div class="container">
+    <h1>Hugemed f-URS Teknik Analizi</h1>
+    <p class="sub-title">Cihaz üzerindeki kırmızı alanlara tıklayarak teknik detayları görebilirsiniz.</p>
+
+    <div class="interactive-map-container">
+        <img src="assets/img/hugemed-urs.jpg" alt="Hugemed f-URS" class="main-device-img">
+
+        <div class="hotspot" id="point-distal" onclick="openModal('distal')"></div>
+        <div class="hotspot" id="point-channel" onclick="openModal('channel')"></div>
+        <div class="hotspot" id="point-btn-top" onclick="openModal('btnTop')"></div>
+        <div class="hotspot" id="point-btn-side" onclick="openModal('btnSide')"></div>
+    </div>
+</div>
+
+<div class="modal" id="infoModal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <img id="modalImg" src="" alt="Detay Görsel" class="modal-img">
+        <h3 id="modalTitle">Detay Başlığı</h3>
+        <p id="modalDesc">Açıklama alanı.</p>
+    </div>
+</div>
+
+<script>
+    const hugemedData = {
+        distal: {
+            title: "HUGEMED DİSTAL UÇ",
+            desc: "Hugemed'in CMOS teknolojili dijital ucu. 275 derecelik bükülme kapasitesiyle alt pol kalikslerine erişimde yüksek performans sağlar.",
+            img: "assets/img/hugemed_distal.jpg"
+        },
+        channel: {
+            title: "ÇALIŞMA KANALI",
+            desc: "3.6 Fr genişliğindeki kanal yapısı, lazer fiberi takılıyken bile maksimum irrigasyon akışı sağlamak üzere tasarlanmıştır.",
+            img: "assets/img/hugemed_kanal.jpg"
+        },
+        btnTop: {
+            title: "DİJİTAL KONTROL BUTONU",
+            desc: "Görüntü dondurma, fotoğraf çekme ve beyaz ayarı gibi fonksiyonların cerrah elindeyken yönetildiği kontrol ünitesi.",
+            img: "assets/img/hugemed_buton.jpg"
+        },
+        btnSide: {
+            title: "ANGÜLASYON MEKANİZMASI",
+            desc: "Hassas yönlendirme sağlayan yan kumanda kolu. Hugemed'in özel kilit mekanizması sayesinde istenilen açıda stabilizasyon sağlar.",
+            img: "assets/img/hugemed_kol.jpg"
+        }
+    };
+
+    const modal = document.getElementById('infoModal');
+
+    function openModal(key) {
+        document.getElementById('modalTitle').innerText = hugemedData[key].title;
+        document.getElementById('modalDesc').innerText = hugemedData[key].desc;
+        const imgTag = document.getElementById('modalImg');
+        if (hugemedData[key].img && hugemedData[key].img !== "") {
+            imgTag.src = hugemedData[key].img;
+            imgTag.style.display = 'block';
+        } else {
+            imgTag.style.display = 'none';
+        }
+        modal.classList.add('is-open');
+    }
+
+    function closeModal() { modal.classList.remove('is-open'); }
+    window.onclick = (e) => { if (e.target == modal) closeModal(); };
+    document.addEventListener('keydown', (e) => { if (e.key === "Escape") closeModal(); });
+</script>
+
+</body>
+</html>

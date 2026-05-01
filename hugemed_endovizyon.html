@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Hugemed Endovizyon Panel</title>
+    <style>
+    .navigation-bar {
+        width: 100%;
+        max-width: 1400px;
+        display: flex;
+        justify-content: flex-start;
+        padding: 20px 50px 0 50px;
+    }
+
+    .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: var(--white);
+        color: var(--hugemed-blue);
+        border: 2px solid var(--hugemed-blue);
+        padding: 10px 20px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .back-btn:hover {
+        background-color: var(--hugemed-blue);
+        color: var(--white);
+        box-shadow: 0 4px 12px rgba(0,85,150,0.2);
+    }
+
+    .back-btn svg {
+        fill: currentColor;
+    }
+</style>
+
+<div class="navigation-bar">
+    <a href="javascript:history.back()" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+            <path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"></path>
+        </svg>
+        GERİ DÖN
+    </a>
+</div>
+    <style>
+
+        :root {
+            --hugemed-blue: #005596;
+            --white: #ffffff;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--white);
+            color: var(--hugemed-blue);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--hugemed-blue);
+            font-weight: bold;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            padding: 50px;
+            justify-content: center;
+            max-width: 1400px;
+        }
+
+        /* --- SOL: GÖRSEL VE NOKTALAR --- */
+        .image-stage {
+            position: relative;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 10px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .device-img {
+            display: block;
+            width: 750px; /* Görsel boyutu */
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* İnteraktif Noktalar (Hotspots) */
+        .dot {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background-color: var(--hugemed-blue);
+            border: 3px solid var(--white);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0,85,150,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .dot:hover {
+            transform: scale(1.4);
+            background-color: #003d6b;
+        }
+
+        /* --- SAĞ: BİLGİ PANELİ --- */
+        .info-side {
+            width: 350px;
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+            min-height: 400px;
+        }
+
+        .info-card {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .info-card.active {
+            display: block;
+        }
+
+        .info-card h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--hugemed-blue);
+            padding-bottom: 10px;
+            color: var(--hugemed-blue);
+        }
+
+        .info-card p {
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .placeholder-text {
+            color: #888;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>HUGEMED ENDOVİZYON SİSTEM KONTROL PANELİ</header>
+
+    <div class="content-wrapper">
+        <div class="image-stage">
+            <img src="assets/img/hugemed-endovizyon.jpg" alt="Hugemed" class="device-img">
+            
+            <div class="dot" style="top: 80%; left: 53%;" onclick="openInfo(1)">1</div>
+            <div class="dot" style="top: 75%; left: 65%;" onclick="openInfo(2)">2</div>
+            <div class="dot" style="top: 35%; left: 64%;" onclick="openInfo(3)">3</div>
+            <div class="dot" style="top: 70%; left: 71%;" onclick="openInfo(4)">4</div>
+            <div class="dot" style="top: 68%; left: 75%;" onclick="openInfo(5)">5</div>
+            <div class="dot" style="top: 62%; left: 78%;" onclick="openInfo(6)">6</div>
+            <div class="dot" style="top: 25%; left: 73%;" onclick="openInfo(7)">7</div>
+            <div class="dot" style="top: 60%; left: 84%;" onclick="openInfo(8)">8</div>
+            <div class="dot" style="top: 55%; left: 89%;" onclick="openInfo(9)">9</div>
+            <div class="dot" style="top: 25%; left: 90%;" onclick="openInfo(10)">10</div>
+        </div>
+
+        <div class="info-side" id="infoSide">
+            <div id="placeholder" class="placeholder-text">Detayları görmek için cihaz üzerindeki numaralı noktalara tıklayınız.</div>
+            
+            <div id="item-1" class="info-card">
+                <h2>1. Power Tuşu</h2>
+                <p>Cihazın ana güç kontrolüdür. Sistemi güvenli bir şekilde başlatır ve kapatır.</p>
+            </div>
+            <div id="item-2" class="info-card">
+                <h2>2. F-urs Bağlantı Noktası</h2>
+                <p>Fiber optik üreterorenoskop bağlantısı için kullanılan teknik giriş noktası.</p>
+            </div>
+            <div id="item-3" class="info-card">
+                <h2>3. USB Girişi</h2>
+                <p>Görüntü ve video verilerini dışa aktarmak veya yazılım güncellemeleri için kullanılır.</p>
+            </div>
+            <div id="item-4" class="info-card">
+                <h2>4. Optik Işık Azaltma</h2>
+                <p>Işık kaynağından gelen şiddeti manuel olarak düşürmek için kullanılır.</p>
+            </div>
+            <div id="item-5" class="info-card">
+                <h2>5. Optik Işık Artırma</h2>
+                <p>Karanlık alanlarda görüntü netliği için ışık şiddetini artırır.</p>
+            </div>
+            <div id="item-6" class="info-card">
+                <h2>6. Otomatik Işık Ayarı</h2>
+                <p>Ortamın ihtiyacına göre ışık seviyesini cihazın otomatik optimize etmesini sağlar.</p>
+            </div>
+            <div id="item-7" class="info-card">
+                <h2>7. Navigasyon Tuşları</h2>
+                <p>Cihaz arayüzündeki ayarlar menüsünde gezinmeyi ve değerleri değiştirmeyi sağlar.</p>
+            </div>
+            <div id="item-8" class="info-card">
+                <h2>8. White Balance (Beyaz Ayarı)</h2>
+                <p>Renklerin doğru görünmesi için kameranın beyaz referans ayarını yapar.</p>
+            </div>
+            <div id="item-9" class="info-card">
+                <h2>9. Video Kayıt Tuşu</h2>
+                <p>Operasyon anındaki canlı görüntüyü bağlı depolama birimine kaydeder.</p>
+            </div>
+            <div id="item-10" class="info-card">
+                <h2>10. Geri / Ana Menü</h2>
+                <p>Açık olan alt menülerden çıkış yapmayı veya ana ekrana dönmeyi sağlar.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openInfo(id) {
+            // Placeholder'ı gizle
+            document.getElementById('placeholder').style.display = 'none';
+            
+            // Tüm kartları gizle
+            const cards = document.querySelectorAll('.info-card');
+            cards.forEach(card => card.classList.remove('active'));
+            
+            // Seçilen kartı göster
+            document.getElementById('item-' + id).classList.add('active');
+        }
+    </script>
+</body>
+</html>

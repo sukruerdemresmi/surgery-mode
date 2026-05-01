@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analiz | Redpine Fleksibl URS</title>
+    <style>
+        :root {
+            --redpine-red: #cc0000;
+            --medical-blue: #0ea5e9;
+            --dark-navy: #1e293b;
+            --white: #ffffff;
+        }
+
+        body { 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            margin: 0; 
+            background: #fffcfc; 
+            color: var(--dark-navy); 
+            overflow-x: hidden; 
+        }
+
+        /* Üst Header Alanı */
+        header { 
+            background: var(--white); 
+            padding: 15px 30px; 
+            border-bottom: 2px solid #fee2e2; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03); 
+        }
+
+        /* Geri Dön Butonu */
+        .back-btn { 
+            text-decoration: none; 
+            color: #666; 
+            font-weight: bold; 
+            font-size: 0.8rem; 
+            border: 1px solid #fee2e2; 
+            padding: 5px 10px; 
+            border-radius: 4px; 
+            transition: 0.3s;
+        }
+        .back-btn:hover { background: #fee2e2; color: var(--redpine-red); }
+
+        /* Endovizyon Buton Stili (Redpine Logo Fontu Benzeri) */
+        .endovizyon-nav-link {
+            text-decoration: none;
+            color: var(--redpine-red);
+            font-family: 'Arial Black', 'Impact', 'Gadget', sans-serif; /* Redpine sert ve kalın font tarzı */
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: -2px; /* Logo gibi harfleri yaklaştırır */
+            border-bottom: 3px solid var(--redpine-red);
+            margin-left: 20px;
+            padding: 0 5px;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .endovizyon-nav-link:hover {
+            letter-spacing: 2px;
+            background-color: var(--redpine-red);
+            color: white;
+            border-radius: 4px;
+        }
+
+        .brand-logo-header { max-height: 45px; }
+
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; text-align: center; }
+
+        h1 { color: var(--redpine-red); font-size: 2.5rem; letter-spacing: 1px; margin-bottom: 5px; }
+        .sub-title { color: #888; margin-bottom: 40px; font-size: 1.1rem; font-style: italic; }
+
+        /* İnteraktif Harita Alanı */
+        .interactive-map-wrapper {
+            position: relative;
+            display: inline-block;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(204, 0, 0, 0.1);
+            padding: 15px;
+            border: 1px solid #fee2e2;
+        }
+
+        .main-device-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            display: block;
+        }
+
+        /* Sıcak Noktalar (Hotspots) */
+        .hotspot {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            background: rgba(14, 165, 233, 0.4); 
+            border: 4px solid var(--medical-blue);
+            border-radius: 50%;
+            cursor: pointer;
+            animation: pulse-red 2s infinite;
+            z-index: 10;
+        }
+
+        /* Redpine için Kırmızı-Mavi Karışımı Pulse Efekti */
+        @keyframes pulse-red {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(204, 0, 0, 0.8); }
+            70% { transform: scale(1.4); box-shadow: 0 0 0 20px rgba(204, 0, 0, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(204, 0, 0, 0); }
+        }
+
+        /* Nokta Konumları - İşaretlerine Göre Yüzdeler */
+        #point-distal { top: 31%; left: 32%; }    /* Cihaz ucu */
+        #point-channel { top: 45%; left: 58%; }   /* Çalışma kanalı */
+        #point-handle { top: 38%; left: 81%; }    /* Kumanda kolu */
+
+        /* Pop-up (Modal) Tasarımı */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal.is-open { display: flex; opacity: 1; }
+
+        .modal-content {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            transform: scale(0.7);
+            transition: transform 0.4s ease;
+            border-top: 10px solid var(--redpine-red);
+        }
+
+        .modal.is-open .modal-content { transform: scale(1); }
+
+        .modal-img { width: 100%; height: 250px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; background: #f0f0f0; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 35px; cursor: pointer; color: #ccc; line-height: 1; }
+        .close-modal:hover { color: var(--redpine-red); }
+
+        #modalTitle { color: var(--redpine-red); margin-bottom: 15px; font-size: 1.8rem; font-weight: 800; }
+        #modalDesc { font-size: 1.1rem; color: #333; line-height: 1.8; margin: 0; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="display: flex; align-items: center;">
+        <a href="c2-flex-urs.html" class="back-btn">← GERİ DÖN</a>
+        <a href="redpine_endovizyon.html" class="endovizyon-nav-link">ENDOVİZYON</a>
+    </div>
+    <img src="assets/img/redpine-logo.jpg" alt="Redpine Logo" class="brand-logo-header">
+</header>
+
+<div class="container">
+    <h1>Redpine f-URS Teknik Analizi</h1>
+    <p class="sub-title">İşaretli noktalara tıklayarak teknik ayrıntıları inceleyebilirsiniz.</p>
+
+    <div class="interactive-map-wrapper">
+        <img src="assets/img/redpine-urs.jpg" alt="Redpine f-URS" class="main-device-img">
+
+        <div class="hotspot" id="point-distal" onclick="openModal('distal')" title="Distal Uç Detayı"></div>
+        <div class="hotspot" id="point-channel" onclick="openModal('channel')" title="Çalışma Kanalı Detayı"></div>
+        <div class="hotspot" id="point-handle" onclick="openModal('handle')" title="Kumanda Kolu Detayı"></div>
+    </div>
+</div>
+
+<div class="modal" id="infoModal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div id="modalImgContainer">
+             <img id="modalImg" src="" alt="Yakın Çekim" class="modal-img">
+        </div>
+        <h3 id="modalTitle">Başlık</h3>
+        <p id="modalDesc">Açıklama metni.</p>
+    </div>
+</div>
+
+<script>
+    // Pop-up Bilgi Verileri
+    const redpineData = {
+        distal: {
+            title: "REDPINE DİSTAL UÇ",
+            desc: "Redpine sisteminin yüksek çözünürlüklü dijital optik ucu. 275 derece angülasyon kabiliyeti ve LED aydınlatma sistemi ile en dar kalikslerde bile net cerrahi görüş sağlar.",
+            img: "assets/img/redpine_distal.jpg" 
+        },
+        channel: {
+            title: "ÇALIŞMA KANALI",
+            desc: "Lazer fiberleri ve basketlerin geçtiği 3.6 Fr genişliğindeki özel kaplamalı kanal. Pürüzsüz iç yüzeyi sayesinde alet geçişleri hızlı ve güvenlidir. Genede 272 mikron(μ) lazer probuna kullanmaktazyız. Çünkü daha kalın fiberler manevra vermede sorun oluşturmaktadır.",
+            img: "assets/img/redpine_kanal.jpg"
+        },
+        handle: {
+            title: "ERGO-KOL MEKANİZMASI",
+            desc: "Tek parmakla yönetilebilen hassas kumanda kolu. Redpine ergonomisi sayesinde cerrahın uzun operasyonlarda yorulmasını engeller ve tam kontrol sunar. Açı kilidi sayesinde bulunduğu açıyı sabitleyip bulunduğu konumu korumayı hedefler.",
+            img: "assets/img/redpine_kol.jpg"
+        }
+    };
+
+    const modal = document.getElementById('infoModal');
+
+    function openModal(key) {
+        document.getElementById('modalTitle').innerText = redpineData[key].title;
+        document.getElementById('modalDesc').innerText = redpineData[key].desc;
+        
+        const imgTag = document.getElementById('modalImg');
+        // Eğer o bölgenin yakın çekimi yoksa alanı gizler
+        if (redpineData[key].img && redpineData[key].img !== "") {
+            imgTag.src = redpineData[key].img;
+            imgTag.style.display = 'block';
+        } else {
+            imgTag.style.display = 'none';
+        }
+
+        modal.classList.add('is-open');
+    }
+
+    function closeModal() {
+        modal.classList.remove('is-open');
+    }
+
+    // Modal dışına tıklayınca veya Esc tuşu ile kapatma
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "Escape") closeModal();
+    });
+</script>
+
+</body>
+</html>

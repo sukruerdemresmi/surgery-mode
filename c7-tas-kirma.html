@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugemed | Taş Kırma Sistemleri</title>
+    <style>
+        :root {
+            --hugemed-blue: #005596;
+            --white: #ffffff;
+            --text-dark: #1a1a1a;
+            --border-light: #e0e0e0;
+            --overlay-blue: rgba(0, 85, 150, 0.5);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Tam ekran panel görünümü için */
+            background-color: var(--white);
+        }
+
+        /* Ana Izgara Yapısı */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Genel Panel Stili */
+        .panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-light);
+            text-decoration: none;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            background: var(--white);
+        }
+
+        .panel h2 {
+            color: var(--hugemed-blue);
+            font-size: 1.8rem;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            z-index: 5;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: transform 0.3s ease;
+        }
+
+        .panel:hover h2 {
+            transform: scale(1.05);
+        }
+
+        /* --- VİDEOLU PANEL (SOL ÜST) --- */
+        .video-panel {
+            background: #000; /* Video yüklenene kadar siyah zemin */
+        }
+
+        .bg-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: 1;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            opacity: 0.8;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay-blue);
+            z-index: 2;
+            transition: background 0.4s ease;
+        }
+
+        .video-panel:hover .video-overlay {
+            background: rgba(0, 85, 150, 0.3);
+        }
+
+        .video-panel h2 {
+            color: white !important;
+            text-shadow: 2px 2px 15px rgba(0,0,0,0.6);
+        }
+
+        /* --- DİĞER PANELLER (BEYAZ TEMA) --- */
+        .standard-panel:hover {
+            background-color: #f0f7ff;
+        }
+
+        /* --- MERKEZİ LOGO (NT) --- */
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            background-color: var(--hugemed-blue);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 900;
+            border: 5px solid var(--white);
+            box-shadow: 0 0 25px rgba(0,0,0,0.2);
+            z-index: 100;
+            pointer-events: none; /* Altındaki linkleri engellememesi için */
+            letter-spacing: 2px;
+        }
+
+        /* Navigasyon Tuşu */
+        .nav-top {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            z-index: 200;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: var(--hugemed-blue);
+            background: white;
+            padding: 8px 16px;
+            border: 2px solid var(--hugemed-blue);
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+        .back-link:hover {
+            background: var(--hugemed-blue);
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="nav-top">
+        <a href="cihazlar.html" class="back-link">← GERİ DÖN</a>
+    </div>
+
+    <div class="center-circle">NT</div>
+
+    <div class="grid-container">
+        
+        <a href="jena_multipulse.html" class="panel video-panel">
+            <video autoplay muted loop playsinline class="bg-video">
+                <source src="assets/img/jena_tanitim.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+            <h2>JENA MULTIPULSE HO</h2>
+        </a>
+
+        <a href="sphinx_lisa.html" class="panel standard-panel">
+            <video autoplay muted loop playsinline class="bg-video">
+                <source src="assets/img/sphinx_tanitim.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+            <h2 style="color: #ffffff;">SPHINX LISA HO</h2>
+        </a>
+
+        <a href="quanta_cyber.html" class="panel standard-panel">
+            <video autoplay muted loop playsinline class="bg-video">
+                <source src="assets/img/quanta_tanitim.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+            <h2 style="color: #ffffff;">QUANTA CYBER HO</h2>
+        </a>
+
+        <a href="elmed_pnomatik.html" class="panel standard-panel">
+           <video autoplay muted loop playsinline class="bg-video">
+                <source src="assets/img/pcnl.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+            <h2 style="color: #ffffff;">ELMED PNÖMATİK TAŞ KIRMA</h2>
+        </a>
+
+    </div>
+
+</body>
+</html>

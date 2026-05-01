@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redpine | Sistem Kontrol Paneli</title>
+    <style>
+        :root {
+            --redpine-green: #d12121; /* Kırmızı renk tanımı */
+            --yellow-point: #e4e80b;
+            --bg-dark: #969697;
+            --panel-white: #a4a3a3;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            background: var(--bg-dark); 
+            color: rgb(132, 129, 129);
+            overflow-x: hidden;
+        }
+
+        header {
+            background: #ffffff;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #374151;
+        }
+
+        .back-link { 
+            color: var(--redpine-green); 
+            text-decoration: none; 
+            font-weight: bold; 
+            border: 1px solid var(--redpine-green);
+            padding: 8px 15px;
+            border-radius: 6px;
+        }
+
+        h1 { color: var(--redpine-green); margin: 0; font-size: 1.5rem; letter-spacing: 2px; }
+
+        .container { 
+            max-width: 1000px; 
+            margin: 20px auto; 
+            padding: 20px; 
+            text-align: center; 
+        }
+
+        /* --- ETKİLEŞİMLİ MONİTÖR ALANI --- */
+        .monitor-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 800px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+            line-height: 0;
+        }
+
+        .main-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Sarı işaretlerin üzerine gelecek bilgi noktaları */
+        .hotspot {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: rgba(251, 191, 36, 0.2);
+            border: 3px solid var(--yellow-point);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+            animation: pulse-yellow 2s infinite;
+        }
+
+        @keyframes pulse-yellow {
+            0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+            70% { transform: translate(-50%, -50%) scale(1.3); box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
+            100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        }
+
+        /* --- SARI İŞARET KOORDİNATLARI (Görsele Göre) --- */
+        /* Üst ve Yan Bağlantılar */
+        #pt-home     { top: 12%; left: 25%; }  /* Sol üst ev ikonu */
+        #pt-power-in { top: 20%; left: 15.5%; }  /* Sol güç kablosu girişi */
+        #pt-camera-in{ top: 19%; left: 81%; }    /* Sağ kamera kablosu girişi */
+
+        /* Alt Fonksiyon Tuşları (Soldan Sağa) */
+        #pt-br-minus { top: 54.5%; left: 29%; }  /* Brightness - */
+        #pt-br-plus  { top: 54.5%; left: 35%; }  /* Brightness + */
+        #pt-video    { top: 54.5%; left: 41%; }  /* Video Kayıt */
+        #pt-photo    { top: 54.5%; left: 46.2%; }    /* Fotoğraf Çekme */
+        #pt-zoom     { top: 54.5%; left: 52%; }    /* Zoom Kontrol */
+        #pt-wbal     { top: 54.5%; left: 57.5%; }  /* White Balance */
+        #pt-user     { top: 54.5%; left: 63%; }    /* User Mode */
+        #pt-power    { top: 54.5%; left: 69%; }    /* Ana Güç Tuşu */
+
+        /* --- MODAL (POP-UP) GÜNCEL STİLLERİ --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* Arka planı daha koyu yapalım ki modal öne çıksın */
+            z-index: 1000;
+            justify-content: center; align-items: center;
+        }
+        .modal.is-open { display: flex; }
+        .modal-content {
+            background: #ffffff; /* Beyaz Arkaplan */
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            text-align: center;
+            border: 3px solid var(--redpine-green); /* Kırmızı Çerçeve */
+            position: relative; /* Kapatma tuşu için gerekli */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .close-btn { 
+            position: absolute; 
+            top: 10px; 
+            right: 15px; 
+            font-size: 24px; 
+            cursor: pointer; 
+            color: var(--redpine-green); /* Kırmızı Kapatma Tuşu */
+            font-weight: bold;
+        }
+        .close-btn:hover { color: #000; }
+
+        h3 { 
+            color: #000000; /* Siyah Başlık */
+            margin-top: 0; 
+            font-size: 1.3rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        #infoText { 
+            line-height: 1.6; 
+            color: #000000; /* Siyah Açıklama Yazısı */
+            font-size: 14px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="redpine_detay.html" class="back-link">← CİHAZ ANALİZİNE DÖN</a>
+    <h1>REDPINE CONTROL PANEL</h1>
+</header>
+
+<div class="container">
+    <div class="monitor-wrapper">
+        <img src="assets/img/redpine-endovizyon.jpg" alt="Redpine Monitor" class="main-img">
+
+        <div class="hotspot" id="pt-home" onclick="showInfo('home')"></div>
+        <div class="hotspot" id="pt-power-in" onclick="showInfo('powerIn')"></div>
+        <div class="hotspot" id="pt-camera-in" onclick="showInfo('cameraIn')"></div>
+        
+        <div class="hotspot" id="pt-br-minus" onclick="showInfo('brMinus')"></div>
+        <div class="hotspot" id="pt-br-plus" onclick="showInfo('brPlus')"></div>
+        <div class="hotspot" id="pt-video" onclick="showInfo('video')"></div>
+        <div class="hotspot" id="pt-photo" onclick="showInfo('photo')"></div>
+        <div class="hotspot" id="pt-zoom" onclick="showInfo('zoom')"></div>
+        <div class="hotspot" id="pt-wbal" onclick="showInfo('wbal')"></div>
+        <div class="hotspot" id="pt-user" onclick="showInfo('user')"></div>
+        <div class="hotspot" id="pt-power" onclick="showInfo('powerBtn')"></div>
+    </div>
+</div>
+
+<div class="modal" id="infoModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeInfo()">&times;</span>
+        <h3 id="infoTitle">Fonksiyon</h3>
+        <p id="infoText">Açıklama...</p>
+    </div>
+</div>
+
+<script>
+    const data = {
+        home: { title: "ANA MENÜ / HOME", text: "Sistem ayarlarına, depolama alanına ve hasta kayıt arşivine erişim sağlar." },
+        powerIn: { title: "GÜÇ GİRİŞİ (DC)", text: "Cihazın bataryasını şarj etmek ve kesintisiz çalışma için adaptör bağlantı noktası." },
+        cameraIn: { title: "KAMERA BAĞLANTISI", text: "f-URS cihazından gelen dijital veriyi monitöre aktaran ana giriş soketi." },
+        brMinus: { title: "PARLAKLIK AZALTMA", text: "Görüntüdeki ışık yoğunluğunu düşürerek doku detaylarını optimize eder." },
+        brPlus: { title: "PARLAKLIK ARTIRMA", text: "Daha karanlık cerrahi alanlarda görünürlüğü artırmak için kullanılır." },
+        video: { title: "VİDEO KAYIT", text: "Operasyonu gerçek zamanlı olarak dahili belleğe veya USB'ye kaydetmeye başlar." },
+        photo: { title: "FOTOĞRAF ÇEKME", text: "Anlık cerrahi görüntüyü dondurarak fotoğraf olarak kaydeder." },
+        zoom: { title: "DİJİTAL ZOOM", text: "Görüntüyü optik bozunma olmadan dijital olarak yakınlaştırır." },
+        wbal: { title: "BEYAZ AYARI (W.BAL)", text: "Renklerin gerçeğe en yakın şekilde görünmesi için ışık kalibrasyonu yapar." },
+        user: { title: "KULLANICI MODLARI", text: "Farklı cerrahlar veya doku tipleri için önceden tanımlanmış görüntüleme profilleri." },
+        powerBtn: { title: "GÜÇ TUŞU (POWER)", text: "Sistemi açıp kapatmak için kullanılan ana kontrol butonu." }
+    };
+
+    const modal = document.getElementById('infoModal');
+
+    function showInfo(key) {
+        document.getElementById('infoTitle').innerText = data[key].title;
+        document.getElementById('infoText').innerText = data[key].text;
+        modal.classList.add('is-open');
+    }
+
+    function closeInfo() { modal.classList.remove('is-open'); }
+    window.onclick = (e) => { if (e.target == modal) closeInfo(); };
+</script>
+
+</body>
+</html>

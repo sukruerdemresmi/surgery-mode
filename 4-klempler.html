@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klempler Katalog | Surgery - Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* TEMEL AYARLAR */
+        * { margin: 0; padding: 0; box-sizing: border-box; text-decoration: none; -webkit-font-smoothing: antialiased; }
+        body, html { height: 100%; width: 100%; font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e3a8a 100%); background-attachment: fixed; color: white; overflow-x: hidden; }
+
+        /* HEADER */
+        .top-header { width: 100%; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.5); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .back-btn { color: #fff; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; }
+
+        /* ANA DÜZEN */
+        .main-layout { display: flex; max-width: 1100px; margin: 30px auto; padding: 0 20px 140px 20px; gap: 30px; }
+
+        /* ARAMA SIDEBAR */
+        .sidebar { flex: 0 0 280px; display: flex; flex-direction: column; gap: 15px; }
+        .search-box { background: rgba(255, 255, 255, 0.1); border: 2px solid #fbbf24; /* Klempler için sarı/altın tema */ border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 10px; }
+        .search-box input { background: transparent; border: none; color: white; width: 100%; outline: none; font-family: inherit; }
+        #resultsList { background: rgba(255, 255, 255, 0.05); border-radius: 15px; overflow: hidden; display: none; border: 1px solid rgba(255, 255, 255, 0.1); max-height: 400px; overflow-y: auto; }
+        .result-item { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.2s; font-size: 0.8rem; }
+        .result-item:hover { background: rgba(251, 191, 36, 0.2); }
+
+        /* LİSTE ALANI */
+        .content-area { flex: 1; }
+        .list-card { background: rgba(255, 255, 255, 0.05); border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.1); overflow: hidden; }
+        .product-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.3s; }
+        .product-row:hover { background: rgba(255, 255, 255, 0.08); }
+        .product-row h3 { font-size: 0.9rem; font-weight: 600; letter-spacing: 0.5px; }
+        .info-badge { width: 22px; height: 22px; background: rgba(251, 191, 36, 0.2); color: #fbbf24; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: 800; }
+
+        /* POP-UP (MODAL) */
+        /* POP-UP (MODAL) GELİŞTİRİLMİŞ BOYUTLAR */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.92); /* Daha koyu arka plan */
+    backdrop-filter: blur(20px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 10px; /* Mobilde kenarlardan boşluk */
+}
+
+.modal-content {
+    background: rgba(30, 41, 59, 0.7); /* Slate-900 benzeri yarı saydam */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 95%;
+    max-width: 900px; /* GENİŞLİK ARTIRILDI (Eskisi 550px idi) */
+    max-height: 90vh; /* Ekran yüksekliğinin %90'ı */
+    border-radius: 40px;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    overflow-y: auto; /* İçerik taşarsa kaydırılabilir */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.modal-content img {
+    width: 100%;
+    max-width: 700px; /* Görselin aşırı büyümesini engeller */
+    background: white;
+    border-radius: 25px;
+    padding: 20px;
+    margin-bottom: 25px;
+    max-height: 450px; /* Görsel yüksekliği optimize edildi */
+    object-fit: contain;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h2 {
+    color: #fbbf24;
+    margin-bottom: 15px;
+    font-size: 1.8rem; /* Başlık büyütüldü */
+    font-weight: 800;
+}
+
+.modal-content p {
+    color: #f1f5f9;
+    font-size: 1.1rem; /* Yazı boyutu artırıldı */
+    line-height: 1.7;
+    text-align: left;
+    background: rgba(15, 23, 42, 0.5);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.close-btn {
+    margin-top: 30px;
+    padding: 15px 50px;
+    background: #fff;
+    color: #000;
+    border-radius: 100px;
+    font-weight: 900;
+    cursor: pointer;
+    display: inline-block;
+    transition: 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.close-btn:hover {
+    transform: scale(1.05);
+    background: #fbbf24;
+}
+
+        /* FOOTER */
+        .nt-footer { position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.85); padding: 15px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
+        .mini-logo { width: 38px; height: 38px; background: #fff; border-radius: 10px; color: #000; display: flex; justify-content: center; align-items: center; font-weight: 800; }
+
+        @media (max-width: 850px) { .main-layout { flex-direction: column; } .sidebar { flex: none; width: 100%; } }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <a href="aletler.html" class="back-btn">← GERİ</a>
+        <div style="font-weight: 800; font-size: 0.9rem; letter-spacing: 1px;">KLEMPLER</div>
+        <div style="width: 40px;"></div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="megaSearch" onkeyup="smartSearch()" placeholder="Klemp ara...">
+            </div>
+            <div id="resultsList"></div>
+        </aside>
+
+        <main class="content-area">
+            <div class="list-card" id="mainList"></div>
+        </main>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modalImg" src="" alt="">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDesc"></p>
+            <div class="close-btn" onclick="closeModal()">TAMAM</div>
+        </div>
+    </div>
+
+    <div class="nt-footer">
+        <div class="mini-logo">NT</div>
+        <p style="font-size:0.55rem; color:#888; margin-top:5px;">Şükrü ERDEM © 2026</p>
+    </div>
+
+    <script>
+        const klempler = [
+            { name: "Adson Hemostatik Klemp", img: "adsonhemostatikklemp.jpg", desc: "Mikrocerrahi ve plastik cerrahide küçük damarları atravmatik bir şekilde klemplemek için son derece ince ve hassas uçlu alet." },
+            { name: "Allis Doku Klembi", img: "allisdokuklembi.jpg", desc: "Bağırsak veya fasya gibi ağır ve kaygan dokuları, birbirine geçen dişli yapısıyla sıkıca kavramak için kullanılır." },
+            { name: "Allis Hassas Doku Klembi", img: "allishassasdokuklembi.jpg", desc: "Narin dokuları veya fasyaları minimum travmayla tutmak için tasarlanmış, standart Allis'e göre çok daha zarif bir yapı." },
+            { name: "Babcock Doku Klembi", img: "babcockdokuklembi.jpg", desc: "Bağırsak veya fallop tüpü gibi narin organları ezmeden tutmak için delikli (fenestre) ve dişsiz bir yapıya sahip atravmatik klemp." },
+            { name: "Backhaus Çamaşır Klembi", img: "backhauscamasirklembi.jpg", desc: "Steril örtüleri birbirine veya hastanın cildine tutturarak cerrahi alanı sabitlemek için kullanılan en yaygın pens." },
+            { name: "Bainbridge Klemp", img: "bainbridgeklemp.jpg", desc: "Damar veya bağırsak gibi narin dokuları geçici kapatmak için uzun ve boylamasına tırtıklı çenelere sahip zarif bir alet." },
+            { name: "Ballenger Over Klembi", img: "ballengeroverklembi.jpg", desc: "Düz ve kavisli seçenekleri mevcuttur. Operasyonlarda narin dokuların stabilizasyonu için kullanılır." },
+            { name: "Bengolea Hemostatik Klembi", img: "bengoleahemostatikklembi.jpg", desc: "Derin vücut boşluklarındaki büyük damarları klemplemek için oldukça uzun ve sağlam yapılı tasarım." },
+            { name: "Best Kolon Klemp", img: "bestkolonklemp.jpg", desc: "Kalın bağırsak cerrahisinde segmentleri doku hasarını en aza indirerek güvenli bir şekilde kapatmak için tasarlanmıştır." },
+            { name: "Blake Safra Taşı Tutma Klembi", img: "blakesafratasitutmaklembi.jpg", desc: "Safra kesesi veya kanallarındaki taşları parçalamadan kavrayıp dar kanallardan tahliye etmek için özel tırtıklı yapı." },
+            { name: "Bland Servikal Traksiyon Klembi", img: "blandservikaltraksiyonklembi.jpg", desc: "Rahim ağzını (serviks) sıkıca kavrayıp çekmek ve sabit tutmak amacıyla kullanılan jinekolojik alet." },
+            { name: "Bonney Organ Tutma Klembi", img: "bonneyorgantutmaklembi.jpg", desc: "İç organları veya ağır dokuları güvenli bir şekilde kavrayıp yerini değiştirmek için kullanılan güçlü bir pens türüdür." },
+            { name: "Bozeman Uterin Pansuman Klembi", img: "bozemanuterinklembi.jpg", desc: "Jinekolojik işlemlerde rahim içine tampon yerleştirmek veya pansuman taşımak için kullanılan uzun 'S' kıvrımlı alet." },
+            { name: "Bridge Hemostatik Klemp", img: "bridgehemostatikklembi.jpg", desc: "Derin dokulardaki kan damarlarını görüşü kapatmadan atravmatik bir şekilde klemplemek için açılı uç yapısına sahip." },
+            { name: "Büzgü Dikiş Klembi", img: "buzgudikisklembi.jpg", desc: "Organ dokusuna 'tütün kesesi' ağzı gibi büzgülü dikiş atmayı kolaylaştıran, iğne kanallı özel klemp." },
+            { name: "Çamaşır Klembi (Hortumlu)", img: "camasirklembi.jpg", desc: "Hortum ve kabloların (koter, aspiratör vb.) masadan kaymasını engellemek için halkalı veya kanal yapısına sahip pens." },
+            { name: "Rochester-Carmalt Klembi", img: "carmaltklembi.jpg", desc: "Büyük damarları ve kalın doku pediküllerini dikey tırtıkları sayesinde yana kaydırmadan güçlüce kavrar." },
+            { name: "Coller Hemostatik Klembi", img: "collerhemostatikklembi.jpg", desc: "Kelly pensine göre daha zarif ve tam boy tırtıklı olan bu alet, derin bölgelerde hassas diseksiyon sağlar." },
+            { name: "Dandy Hemostatik Klembi", img: "dandyhemostatikklembi.jpg", desc: "Kafa derisindeki kan damarlarını kontrol etmek için yana doğru kavisli uçlara sahip nöroşirürji aleti." },
+            { name: "Dandy-Kolodny Klembi", img: "dandykolodnyklembi.jpg", desc: "Özellikle kafa derisi damarlarını klemplemek için tasarlanmış yana kavisli (sideways curved) hassas pens." },
+            { name: "DeBakey Histerektomi Klembi", img: "debakeyhisterektomiklembi.jpg", desc: "Rahim ameliyatlarında damar ve dokuları atravmatik (DeBakey dişli) yapısıyla güvenle mühürler." },
+            { name: "De Lee Obstetrik Klembi", img: "deleeobstetrik.jpg", desc: "Doğum sırasında bebeğin başını travma yaratmadan kavrayarak çıkışa rehberlik eden kaşık yapılı forseps." },
+            { name: "De Lee Servikal Kavrama Klembi", img: "deleeservikaltutmaklembi.jpg", desc: "Jinekolojik muayene ve müdahalelerde rahim ağzını nazikçe tutup stabilize eden alet." },
+            { name: "Edna Atravmatik Çamaşır Klembi", img: "ednaatravmatikcamasirklembi.jpg", desc: "Cerrahi örtüleri delmeden, sterilizasyon bariyerini koruyarak sıkıştıran küt uçlu sabitleme pensi." },
+            { name: "Edna Çamaşır Klembi", img: "ednacamasirklembi.jpg", desc: "Örtü ve havluları güvenle tutmak için tasarlanmış klasik küt uçlu Edna modeli." },
+            { name: "Finochietto Torasik Klemp", img: "finochiettotorasikklemp.jpg", desc: "Bronş ve büyük göğüs damarlarını derin sahalarda dikey tırtıklarıyla kaydırmadan tutan ağır klemp." },
+            { name: "Foerster Over Klembi", img: "foersteroverklembi.jpg", desc: "Uçları delikli yapısı sayesinde operasyon sahasındaki kanı temizlemek (tampon tutmak) veya organları kavramak için ideal." },
+            { name: "Gemini Klemp", img: "geminiklemp.jpg", desc: "Derin cerrahi sahalarda damarların altından sütur geçirmek için 90 derece dik açılı ve enine tırtıklı alet." },
+            { name: "Gomco Sünnet Klembi", img: "gomcosünnetklembi.jpg", desc: "Sünnet işleminde kanamayı durdurmak ve kesiyi kansız gerçekleştirmek için kullanılan mekanik düzenek." },
+            { name: "Gray Sistik Kanal Klembi", img: "graysistikkanalklembi.jpg", desc: "Safra kesesi ameliyatlarında sistik kanalı ve damarları ezmeden kavramak için kendine has kavisli uç yapısı." },
+            { name: "Gunnar Makaralı Klemp", img: "gunnarmakaraliklemp.jpg", desc: "Mikrocerrahide damar sütünları sırasında gerilimi makaralı mekanizmasıyla hassasça ayarlayan özel alet." },
+            { name: "Halsted Mosquito Klemp", img: "halstedmosquitoklembi.jpg", desc: "Çok küçük damarları tutmak için tasarlanmış cerrahinin en temel ve en küçük hemostatik pensi." },
+            { name: "Harrington P.D. Klemp", img: "harringtonklemp.jpg", desc: "Derin kavitelerde Patent Ductus damarlarını klemplemek için tasarlanmış özel kavisli hemostatik alet." },
+            { name: "Heaney-Ballantine Histerektomi", img: "heaneyballantinehisterektomiklembi.jpg", desc: "Uterusun (rahim) yan bağlarını ve damarlarını tutmak için kullanılan düz tırtıklı ağır jinekolojik pens." },
+            { name: "Heaney Histerektomi Klembi", img: "heaneyhisterektomiklembi.jpg", desc: "Çapraz tırtıklı ve dişli ucuyla rahim bağlarını kaydırmadan kavramak için tasarlanmış kavisli ağır klemp." },
+            { name: "henrotin velsellum klembi", img: "henrotinvelsellumklembi.jpg", desc: "Jinekolojik muayene sırasında rahmi sıkıca kavramak için kullanılan alettir." },
+            { name: "Jones Çapraz Çamaşır Klembi", img: "jonescaprazcamasirklembi.jpg", desc: "Yaylı mekanizması sayesinde cerrahi örtüleri çapraz bir şekilde birbirine sabitleyen hafif pens." },
+            { name: "Jones Hemostat Klemp", img: "Joneshemostatklembi.jpg", desc: "Jones tipi yaylı yapıyı damar tutma hassasiyetiyle birleştiren pratik ve hafif hemostatik alet." },
+            { name: "Kablo Sabitleme Klembi", img: "kablosabitlemeklembi.jpg", desc: "Koter, kamera ve aspiratör kablolarını düzenli tutup masaya sabitlemek için özel halkalı tasarım." },
+            { name: "Kelly Klembi", img: "kellyklembi.jpg", desc: "Orta büyüklükteki damarlar için kullanılan, ucu yarım tırtıklı temel cerrahi hemostatik pens." },
+            { name: "Kelly Plasenta Klembi", img: "kellyplasentaklembi.jpg", desc: "Doğum sonrası plasenta ve membranları uterus içinden güvenle temizlemek için tasarlanmış geniş kavisli pens." },
+            { name: "Lahey Traksiyon Klembi", img: "laheytraksiyonklembi.jpg", desc: "Özellikle tiroid cerrahisinde sert dokuları sıkıca kavrayıp çekmek için 3x3 dişli yapıya sahip alet." },
+            { name: "Lawrence Hemostatik Klemp", img: "lawrencehemostatikklembi.jpg", desc: "Derin bölgelerdeki damarları klemplemek için kullanılan uzun ve zarif yapılı damar pensi." },
+            { name: "Lejeune Toraks Klembi", img: "lejeunetoraksklembi.jpg", desc: "Göğüs cerrahisinde akciğer dokusunu veya damarları atravmatik bir şekilde tutmak için özel kavisli uç." },
+            { name: "Lore Delikli Klemp", img: "loredelikliklemp.jpg", desc: "Doku sabitleme ve dikiş geçişleri sırasında hassas kavrama sağlayan fenestre uçlu klemp." },
+            { name: "Mastin Kas Klembi", img: "mastinkasklembi.jpg", desc: "Ortopedi ve genel cerrahide kas liflerini travmayı minimize ederek tutan geniş ağızlı tasarım." },
+            { name: "Mayo-Pean Klemp", img: "mayopeanklembi.jpg", desc: "Kalın dokuları ve büyük damarları klemplemek için çeneleri tam boy tırtıklı ağır hemostatik pens." },
+            { name: "McDougal Prostatektomi Klembi", img: "mcdougalprostatektomiklembi.jpg", desc: "Ürolojik cerrahide dar pelvik sahada çalışmaya uygun özel açılı prostat klembi." },
+            { name: "Nichlos Hortum Tutma Pensi", img: "nichloshortumtutmapensi.jpg", desc: "Aspiratör hortumlarını steril örtülere zarar vermeden sabitlemek için tasarlanmış koruyucu uç yapısı." },
+            { name: "Ochsner-Kocher Klemp", img: "ochsnerkocherklemp.jpg", desc: "Kaygan ve dirençli dokuları (faysa) uç kısmındaki 1x2 dişli yapısıyla kaydırmadan tutan güçlü pens." },
+            { name: "Peers Delmeyen Çamaşır Klembi", img: "peersdelmeyencamasirklembi.jpg", desc: "Örtüleri veya hortumları delmeden, sterilizasyon bariyerini koruyarak sıkıştıran atravmatik pens." },
+            { name: "Pennington Klemp", img: "penningtonklembi.jpg", desc: "Uç kısmındaki üçgen halka yapısı sayesinde bağırsak veya akciğer dokusunu geniş yüzeyle kavrayan alet." },
+            { name: "Phaneuf Uterin Arter Klembi", img: "phaneufuterinarterklembi.jpg", desc: "Rahim ameliyatlarında uterin arterleri mühürlemek için tasarlanmış ağır ve güçlü tırtıklı klemp." },
+            { name: "Plastistat Adson Klemp", img: "plastistatsadsonklemp.jpg", desc: "Adson tipi hassas uç yapısını hafif Plastistat mekanizmasıyla birleştiren narin damar pensi." },
+            { name: "Plastistat Collier Klemp", img: "plastistatscollierklemp.jpg", desc: "Hassas damar ve doku klempleme için Collier tipi ağız yapısına sahip ergonomik alet." },
+            { name: "Polk Plasenta Klembi", img: "polkplasentaklembi.jpg", desc: "Plasenta ve membranların uterus içinden nazikçe uzaklaştırılması için kullanılan kavisli obstetrik pens." },
+            { name: "Providence Hospital Klemp", img: "providencehospitalklemp.jpg", desc: "Küçük ve orta boy damarların hemostazı için kullanılan ucu tam tırtıklı hastane tipi klemp." },
+            { name: "Randall Böbrek Taşı Klembi", img: "randallklembi.jpg", desc: "Böbrek kavislerine uygun açılı, taş çıkarmak için kullanılan fenestre uçlu üroloji aleti." },
+            { name: "Rankin Klemp", img: "rankinklemp.jpg", desc: "Kelly klembe benzeyen ancak daha ince yapılı, ucu yarım tırtıklı hemostatik pens." },
+            { name: "Resano Anastomoz Klembi", img: "resanoatravmatikanastomozklembi.jpg", desc: "Damar anastomozları sırasında dokuya zarar vermeden geçici kapama sağlayan atravmatik vasküler klemp." },
+            { name: "Right Angle (Dik Açılı) Klemp", img: "rightangleklemp.jpg", desc: "Derin sahalarda damar altından dikiş geçirmek için kullanılan 90 derece açılı temel diseksiyon aleti." },
+            { name: "Rochester-Pean 1/2 Tırtıklı", img: "rochesterpean12klemp.jpg", desc: "Çenelerinin yarısı tırtıklı olan Pean versiyonu; damar ve doku kontrolü için kullanılır." },
+            { name: "Rochester-Pean Tam Tırtıklı", img: "rochesterpeanklemp.jpg", desc: "Ağır dokuları ve büyük damarları tutmak için boydan boya tırtıklı güçlü hemostatik pens." },
+            { name: "Roeder Bilyeli Çamaşır Klembi", img: "roederbilyelicamasirklembi.jpg", desc: "Uçlarındaki bilyeler sayesinde örtüleri cilde sabitlerken doku delinmesini sınırlayan özel tasarım." },
+            { name: "Sarot İntratorasik Arter Klembi", img: "sarotintratorasikarterklembi.jpg", desc: "Göğüs cerrahisinde derin arterleri güvenle tutmak için tasarlanmış uzun kavisli klemp." },
+            { name: "Schnidt Tonsil Klembi", img: "schnidttonsilklembi.jpg", desc: "Bademcik ameliyatlarında hemostaz sağlamak için kullanılan ince ve zarif yapılı kavisli pens." },
+            { name: "Serrefine (Cross-Action) Klemp", img: "serrefinescrossactionklemp.jpg", desc: "Damar cerrahisinde damarı geçici kapatmak için kullanılan yaylı küçük mikro-klemp." },
+            { name: "Sistik Kanal Kateter Klembi", img: "sistikkanalkateterklembi.jpg", desc: "Safra kesesi ameliyatlarında sistik kanala kateter yerleştirilmesini stabilize eden özel klemp." },
+            { name: "Somer Uterin Elevasyon Klembi", img: "someruterinelevasyonklembi.jpg", desc: "Jinekolojik operasyonlarda rahmi manipüle etmek ve yukarı kaldırmak için kullanılan geniş ağızlı alet." },
+            { name: "Spermatik Kord Sabitleme Klembi", img: "spermatikkordsabitlemeklembi.jpg", desc: "Fıtık operasyonlarında spermatik kordu travmasız stabilize etmek için kullanılan halkalı tasarım." },
+            { name: "Toraks Arter Klembi", img: "toraksarterklembi.jpg", desc: "Göğüs kafesi içindeki derin arterleri klemplemek için tasarlanmış uzun ve kavisli göğüs cerrahisi aleti." },
+            { name: "Vanderbilt Damar Klembi", img: "vanderbiltdamarklembi.jpg", desc: "Vasküler cerrahide damarları ezmeden güvenle kavramak için tasarlanmış özel tırtıklı atravmatik klemp." },
+            { name: "Vazektomi Klembi", img: "vazektomiklembi.jpg", desc: "Vazektomi prosedüründe vaz deferensi cildi delmeden stabilize etmek için kullanılan halka uçlu alet." },
+            { name: "Wallace Sezaryen Klembi", img: "wallancesezaryenklembi.jpg", desc: "Sezaryen ameliyatlarında uterusu (rahim) güvenle kapatmak için kullanılan geniş ve sağlam pens." },
+            { name: "Wertheim-Cullen Pedikül Klembi", img: "wertheimcullenpedikulklembi.jpg", desc: "Pelvik cerrahide kalın doku pediküllerini mühürlemek için tasarlanmış 90 derece açılı ağır klemp." },
+            { name: "Williams Kıymık Klembi", img: "williamskiymikklembi.jpg", desc: "Doku içindeki yabancı cisimleri veya kemik parçalarını tutup çıkarmak için kullanılan ince uçlu pens." },
+            { name: "Zipser Penis Klembi", img: "zipserpenisklembi.jpg", desc: "Ürolojik işlemlerde üretral sızıntıyı önlemek için dışarıdan baskı uygulayan ayarlanabilir özel klemp." }
+        ];
+
+        function initList() {
+            const list = document.getElementById('mainList');
+            klempler.sort((a, b) => a.name.localeCompare(b.name)).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'product-row';
+                row.onclick = () => openModal(item);
+                row.innerHTML = `<h3>${item.name}</h3><div class="info-badge">i</div>`;
+                list.appendChild(row);
+            });
+        }
+
+        function smartSearch() {
+            let input = document.getElementById('megaSearch').value.toUpperCase();
+            let resultsDiv = document.getElementById('resultsList');
+            let mainList = document.getElementById('mainList');
+            resultsDiv.innerHTML = ''; mainList.style.opacity = (input.length < 2) ? "1" : "0.3";
+            if (input.length < 2) { resultsDiv.style.display = 'none'; return; }
+            let filtered = klempler.filter(item => item.name.toUpperCase().includes(input));
+            if (filtered.length > 0) {
+                resultsDiv.style.display = 'block';
+                filtered.forEach(item => {
+                    let div = document.createElement('div');
+                    div.className = 'result-item'; div.innerHTML = item.name;
+                    div.onclick = () => openModal(item); resultsDiv.appendChild(div);
+                });
+            } else { resultsDiv.style.display = 'none'; }
+        }
+
+        function openModal(item) {
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalDesc').innerText = item.desc;
+            document.getElementById('modalImg').src = 'assets/img/' + item.img;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+
+        initList();
+    </script>
+</body>
+</html>

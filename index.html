@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surgery - Mode | SURGERY NURSE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+    
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            -webkit-font-smoothing: antialiased; /* iOS'ta pürüzsüz yazı */
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Inter', -apple-system, sans-serif;
+            overflow: hidden; /* Tam ekran, kaydırma yok */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* CANLI VE HAREKETLİ ARKA PLAN */
+        .live-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Kendi görselini kullanmak için url'yi 'assets/img/arkaplan.jpg' yap */
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('assets/img/arkaplan.jpg') no-repeat center center;
+            background-size: cover;
+            z-index: -1;
+            /* Hafif hareket efekti için */
+            animation: bgZoom 15s infinite alternate;
+        }
+
+        @keyframes bgZoom {
+            0% { transform: scale(1.0); }
+            100% { transform: scale(1.1); }
+        }
+
+        /* ANA CAM PANEL (GLASSMORPHISM) */
+        .main-glass-panel {
+            width: 90%;
+            height: 85%;
+            background: rgba(255, 255, 255, 0.05); /* Yarı saydam beyaz */
+            backdrop-filter: blur(25px) saturate(180%); /* Buzlu cam efekti */
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1); /* İnce ışık çizgisi */
+            border-radius: 35px; /* iOS tarzı yumuşak köşe */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        /* ÜST NAVİGASYON (Görseldeki gibi sağ üstte) */
+        .glass-header {
+            width: 100%;
+            padding: 30px 50px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 40px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ALT BUTON GRUBU - Dikey ve Ortalı Hale Getirildi */
+.bottom-section {
+    width: 100%;
+    padding: 20px 40px 40px 40px;
+    display: flex;
+    flex-direction: column; /* Butonları alt alta dizer */
+    justify-content: center;
+    align-items: center; /* Yatayda tam ortalar */
+    gap: 12px; /* Butonlar arası boşluk */
+    flex: 1; /* Orta alanı doldurur */
+}
+
+/* iOS BUTON STİLİ - Genişlik ve Hizalama Sabitlendi */
+.ios-btn {
+    width: 100%;
+    max-width: 280px; /* Butonların çok genişlememesi için limit koyduk */
+    height: 70px; /* Sabit yükseklik daha şık durur */
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* NT LOGO - Butonların hemen altında şık durması için */
+.logo-badge {
+    width: 75px;
+    height: 75px;
+    background: #ffffff;
+    border-radius: 20px; /* Squircle (iOS ikon) formu */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #000000;
+    margin-top: 10px; /* Butonlarla logo arası mesafe */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+        /* Buton Hover Canlılığı */
+        .ios-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); /* Parlama */
+        }
+        
+        .ios-btn:active {
+            transform: scale(0.97); /* Tıklandığında iOS tarzı küçülme */
+        }
+
+        /* Ortadaki Canlı Logo (NT) */
+        .logo-badge {
+            width: 90px;
+            height: 90px;
+            background: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #000000;
+            box-shadow: 0 5px 15px rgba(255,255,255,0.4); /* Logonun parlaması */
+        }
+
+        /* EN ALT SİYAH BANT (Sıfır Yerleşim) */
+        .black-footer {
+            width: 100%;
+            background-color: #000000;
+            padding: 12px 0;
+            text-align: center;
+            margin-top: auto; /*Footer'ı en alta sabitler */
+        }
+
+        .black-footer p {
+            font-size: 0.75rem;
+            color: #ffffff;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        /* MOBİL UYUMLULUK */
+        @media (max-width: 600px) {
+            .main-glass-panel {
+                width: 95%;
+                height: 95%;
+                border-radius: 25px;
+            }
+
+            .glass-header {
+                padding: 20px 10px;
+                gap: 15px;
+            }
+
+            .nav-link {
+                font-size: 0.7rem; /* Mobilde yazılar küçüldü */
+            }
+
+            .stack-section {
+                gap: 10px; /* Butonlar arası boşluk azaldı */
+            }
+
+            .ios-btn {
+                min-height: 55px; /* Buton yüksekliği mobilde azaldı */
+                font-size: 0.85rem; /* Buton yazısı mobilde küçüldü */
+                border-radius: 15px;
+            }
+
+            .logo-badge {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+                border-radius: 15px;
+            }
+
+            .black-footer {
+                border-bottom-left-radius: 25px;
+                border-bottom-right-radius: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="live-background"></div>
+
+    <div class="main-glass-panel">
+        
+        <header class="glass-header">
+            <a href="index.html" class="nav-link">Anasayfa</a>
+            <a href="hakkimda.html" class="nav-link">Hakkımda</a>
+            <a href="iletisim.html" class="nav-link">İletişim</a>
+        </header>
+
+        <div class="bottom-section">
+            <a href="cerrahi.html" class="ios-btn">CERRAHİ<br>MODE</a>
+            <a href="laparaskopi.html" class="ios-btn">LAPAROSKOPİ<br>MODE</a>
+            <a href="aletler.html" class="ios-btn">ALETLER<br>MODE</a>
+            <a href="cihazlar.html" class="ios-btn">CİHAZLAR<br>MODE</a>
+
+            <div class="logo-badge">NT</div>
+        </div>
+
+        <footer class="black-footer">
+            <p>SAYFANIN TÜM HAKLARI ŞÜKRÜ ERDEM'E AİTTİR. ©2026</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

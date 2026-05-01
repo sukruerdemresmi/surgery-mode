@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NT | Vibrolith Plus Taş Kırma Sistemi</title>
+    <style>
+        :root {
+            --hugemed-blue: #005596;
+            --white: #ffffff;
+            --border-light: #e0e0e0;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: var(--white);
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* --- ÜST NAVİGASYON --- */
+        header {
+            width: 100%;
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--border-light);
+            background: white;
+            position: sticky; /* Sayfa kaysın ama buton kalsın */
+            top: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--hugemed-blue);
+            font-weight: bold;
+            border: 2px solid var(--hugemed-blue);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: var(--hugemed-blue);
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--hugemed-blue);
+            letter-spacing: 2px;
+        }
+
+        /* --- GÖRSEL ŞERİT YAPISI --- */
+        .catalog-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1200px; /* Görsel kalitesini korumak için ideal genişlik */
+            margin: 0 auto;
+            line-height: 0; /* Görseller arasındaki mikro boşlukları siler */
+        }
+
+        .catalog-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+        /* Responsive ayar */
+        @media (max-width: 1200px) {
+            .catalog-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="c7-tas-kirma.html" class="back-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            SİSTEMLERE DÖN
+        </a>
+        <div class="logo-text">ELMED | VIBROLITH PLUS</div>
+        <div style="width: 130px;"></div> </header>
+
+    <div class="catalog-container">
+        <img src="assets/img/elmed-1.jpg" alt="Vibrolith Plus 1" class="catalog-img">
+        <img src="assets/img/elmed-2.jpg" alt="Vibrolith Plus 2" class="catalog-img">
+        <img src="assets/img/elmed-3.jpg" alt="Vibrolith Plus 3" class="catalog-img">
+        <img src="assets/img/elmed-4.jpg" alt="Vibrolith Plus 4" class="catalog-img">
+        <img src="assets/img/elmed-5.jpg" alt="Vibrolith Plus 5" class="catalog-img">
+        <img src="assets/img/elmed-6.jpg" alt="Vibrolith Plus 6" class="catalog-img">
+    </div>
+
+    <footer style="padding: 40px; text-align: center; color: #999; font-size: 12px; line-height: 1.6;">
+        Şükrü Erdem tarafından hazırlanmıştır.<br>
+        &copy; 2026 NT
+    </footer>
+
+</body>
+</html>

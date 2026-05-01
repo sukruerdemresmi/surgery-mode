@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mobil Analiz | Jena MultiPulse Ho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --jena-blue: #005596;
+            --green: #4CAF50;
+            --white: #ffffff;
+            --bg: #f1f5f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: #334155;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        header {
+            width: 100%;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--jena-blue);
+            font-weight: 700;
+            font-size: 0.75rem;
+            border: 1.5px solid var(--jena-blue);
+            padding: 5px 12px;
+            border-radius: 8px;
+        }
+
+        .logo-text { font-size: 0.9rem; font-weight: 900; color: var(--jena-blue); }
+
+        /* MOBİL SAHNE */
+        .stage {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .instruction-text {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .main-device-wrapper {
+            position: relative;
+            background: white;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 500px; /* Mobil için ideal genişlik */
+        }
+
+        .main-img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* DOKUNMATİK NOKTALAR */
+        .hotspot-white {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2.5px solid var(--jena-blue);
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Nokta Konumları (Yüzdesel - Görselle birlikte ölçeklenir) */
+        #pt-fiber         { top: 30%; left: 33%; }
+        #pt-screen        { top: 38%; left: 21%; }
+        #pt-switch        { top: 29%; left: 42%; }
+        #pt-pedal         { top: 76%; left: 86%; }
+        #pt-blastshield   { top: 20%; left: 33%; }
+        #pt-anahtar       { top: 40%; left: 42%; }
+
+        .hotspot-green {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background-color: var(--green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 20;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        #hotspot-green-1 { top: 10%; left: 82%; }
+        #hotspot-green-2 { top: 22%; left: 82%; }
+
+        /* MODAL (BOTTOM SHEET - MOBİL İÇİN EN İYİSİ) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: flex-end; /* Alttan açılması için */
+        }
+
+        .modal.is-open { display: flex; }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            padding: 25px 20px 40px 20px;
+            border-radius: 25px 25px 0 0;
+            position: relative;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.3s ease-out;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .close-bar {
+            width: 40px; height: 5px; background: #e2e8f0;
+            border-radius: 10px; margin: 0 auto 20px auto;
+        }
+
+        .modal h3 { 
+            color: var(--jena-blue); 
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .popup-img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            background: #f8fafc;
+        }
+
+        #modalTextSection {
+            font-size: 0.95rem;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="c7-tas-kirma.html" class="back-btn">← GERİ</a>
+        <div class="logo-text">JENA MultiPulse Ho</div>
+        <div style="width:50px;"></div>
+    </header>
+
+    <div class="stage">
+        <p class="instruction-text">Bileşenleri incelemek için noktalara dokunun</p>
+        <div class="main-device-wrapper">
+            <img src="assets/img/jenamultipulse.jpg" alt="Jena" class="main-img">
+
+            <div class="hotspot-white" id="pt-fiber" onclick="openPopup('fiber')"></div>
+            <div class="hotspot-white" id="pt-screen" onclick="openPopup('screen')"></div>
+            <div class="hotspot-white" id="pt-switch" onclick="openPopup('switch')"></div>
+            <div class="hotspot-white" id="pt-pedal" onclick="openPopup('pedal')"></div>
+            <div class="hotspot-white" id="pt-blastshield" onclick="openPopup('blastshield')"></div>
+            <div class="hotspot-white" id="pt-anahtar" onclick="openPopup('anahtar')"></div>
+
+            <div class="hotspot-green" id="hotspot-green-1" onclick="openPopup('notes')">!</div>
+            <div class="hotspot-green" id="hotspot-green-2" onclick="openPopup('notes2')">!</div>
+        </div>
+    </div>
+
+    <div class="modal" id="infoModal" onclick="closePopup()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="close-bar"></div>
+            <h3 id="modalTitle">Detay Görünüm</h3>
+            <img src="" alt="Detay" id="modalImg" class="popup-img" style="display:none;">
+            <div id="modalTextSection" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const popupData = {
+            fiber:  { title: "Lazer Fiber Girişi", img: "assets/img/popup_fiber.jpg" },
+            screen: { title: "Kontrol Ekranı", img: "assets/img/popup_screen.jpg" },
+            switch: { title: "Emniyet Kilidi", img: "assets/img/popup_switch.jpg" },
+            pedal:  { title: "Ayak Pedalı", img: "assets/img/popup_pedal.jpg" },
+            anahtar:{ title: "Başlatma Kontağı", img: "assets/img/popup_anahtar.jpg"},
+            blastshield: { title: "Işın Koruma Lensi", img: "assets/img/popup_blastshield.jpg"},
+            notes: {
+                title: "Teknik Notlar",
+                img: null,
+                text: `
+                    <ul>
+                        <li>Cihaz <strong>30W</strong> stabil çıkışlıdır.</li>
+                        <li>Anormallik durumunda çalışmayı hemen durdurun.</li>
+                        <li>Sadece biyomedikal müdahale etmelidir.</li>
+                        <li>Asclepion markasına dikkat ediniz.</li>
+                    </ul>
+                `
+            },
+            notes2: {
+                title: "Güç Ayarları",
+                img: null,
+                text: `
+                    <p><strong>Watt = Joule x Hertz</strong></p><br>
+                    <ul>
+                        <li><strong>Böbrek:</strong> Max 15 Watt</li>
+                        <li><strong>Üreter:</strong> Max 25 Watt</li>
+                    </ul>
+                `
+            }
+        };
+
+        const modal = document.getElementById('infoModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalImg = document.getElementById('modalImg');
+        const modalTextSection = document.getElementById('modalTextSection');
+
+        function openPopup(id) {
+            const data = popupData[id];
+            if(!data) return;
+            modalTitle.innerText = data.title;
+            if (data.img) {
+                modalImg.src = data.img;
+                modalImg.style.display = 'block';
+                modalTextSection.style.display = 'none';
+            } else {
+                modalImg.style.display = 'none';
+                modalTextSection.innerHTML = data.text;
+                modalTextSection.style.display = 'block';
+            }
+            modal.classList.add('is-open');
+        }
+
+        function closePopup() { modal.classList.remove('is-open'); }
+    </script>
+</body>
+</html>

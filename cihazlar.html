@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerrahi Cihazlar | Surgery-Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; text-decoration: none; -webkit-font-smoothing: antialiased; }
+        body, html { height: 100%; width: 100%; font-family: 'Inter', sans-serif; background: #f4f7fa; color: #334155; }
+
+        /* HEADER */
+        .top-header { width: 100%; padding: 12px 25px; display: flex; align-items: center; background: #fff; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 1000; }
+        .home-btn { background: #0088cc; color: #fff; padding: 7px 15px; border-radius: 8px; font-weight: 700; font-size: 0.7rem; margin-right: auto; }
+        .header-title { position: absolute; left: 50%; transform: translateX(-50%); font-weight: 800; font-size: 0.85rem; color: #0088cc; letter-spacing: 0.5px; }
+
+        /* SEARCH */
+        .search-section { width: 100%; padding: 30px 20px; text-align: center; background: #fff; }
+        .search-input-wrapper { max-width: 500px; margin: 0 auto; background: #fcfcfc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 12px 20px; display: flex; align-items: center; }
+        .search-input-wrapper input { background: transparent; border: none; width: 100%; outline: none; font-size: 0.95rem; font-weight: 500; flex: 1; }
+
+        /* GRID DÜZENİ */
+        .main-layout { max-width: 1600px; margin: 0 auto; padding: 30px 20px 120px 20px; }
+        .device-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; }
+
+        /* KART TASARIMI */
+        .device-card { background: #fff; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; display: flex; flex-direction: column; transition: 0.25s; cursor: pointer; color: inherit; }
+        .device-card:hover { transform: translateY(-5px); border-color: #0088cc; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        
+        .device-img-box { width: 100%; height: 160px; background: #fff; padding: 5px; }
+        .device-img-box img { width: 100%; height: 100%; object-fit: contain; }
+
+        .device-info { padding: 15px; flex-grow: 1; border-top: 1px solid #f1f5f9; }
+        .device-info h2 { font-size: 0.9rem; font-weight: 700; color: #0088cc; margin-bottom: 8px; min-height: 2.4em; }
+        .device-info p { font-size: 0.75rem; color: #64748b; line-height: 1.4; height: 4.2em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+
+        .device-footer { padding: 10px 15px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; }
+        .tag-text { font-size: 0.55rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+
+        @media (max-width: 1400px) { .device-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 1000px) { .device-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .device-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <a href="index.html" class="home-btn">ANA SAYFA</a>
+        <div class="header-title">CERRAHİ CİHAZ KATALOĞU</div>
+    </header>
+
+    <div class="search-section">
+        <div class="search-input-wrapper">
+            <input type="text" id="liveSearch" placeholder="Cihaz ara..." onkeyup="filterDevices()">
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <div class="device-grid" id="deviceGrid"></div>
+    </div>
+
+    <script>
+        const devices = [
+            { 
+                name: "Sistoskopi / Rezektoskopi Seti", 
+                img: "rezekteskop.jpg", 
+                link: "c1-sistoskopi.html",
+                desc: "Mesane içi işlemler ve TUR-P için kullanılan hassas optik ve cerrahi set.",
+                tagL: "ÇELİK / OPTİK", tagR: "STERİL"
+            },
+            { 
+                name: "Fleksibl Üreterorenoskop", 
+                img: "fleksibl-ureterorenoskop.jpg", 
+                link: "c2-flex-urs.html",
+                desc: "Böbrek taşlarının RIRS yöntemi ile lazerle temizlenmesi için kullanılan cihaz.",
+                tagL: "DİJİTAL", tagR: "HAZIR"
+            },
+            { 
+                name: "Bipolar Koter Uçları (TUR-Loop)", 
+                img: "tur-loop.jpg", 
+                link: "c3-tur-loop.html",
+                desc: "Prostat rezeksiyonu ve kanama kontrolü için kullanılan bipolar koter halkası.",
+                tagL: "BİPOLAR", tagR: "TEK KULLANIMLIK"
+            },
+            { 
+                name: "Semi-Rijit Üreterorenoskop", 
+                img: "semi-rijit-urs.png", 
+                link: "c4-semi-urs.html",
+                desc: "Üreter taşlarının lazer ile kırılması için kullanılan rijit yapılı optik cihaz.",
+                tagL: "RİJİT OPTİK", tagR: "STERİL"
+            },
+            { 
+                name: "Internal Üretratom", 
+                img: "internal-uretratom.jpg", 
+                link: "c5-uretratom.html",
+                desc: "Üretra darlıklarının tedavisi için kullanılan soğuk bıçak cerrahi seti.",
+                tagL: "ÇELİK BIÇAK", tagR: "STERİL"
+            },
+            { 
+                name: "Kılavuz Teller (Guidewires)", 
+                img: "kilavuz-tel.jpg", 
+                link: "c6-kilavuz-tel.html",
+                desc: "Endoskopik işlemlerde yol gösterici olarak kullanılan esnek hidrofilik teller.",
+                tagL: "HİDROFİLİK", tagR: "TEK KULLANIMLIK"
+            },
+            { 
+                name: "Taş Kırma Cihazları", 
+                img: "tas-kirma.jpg", 
+                link: "c7-tas-kirma.html",
+                desc: "Lazer ve pnömatik enerji üreterek taşları parçalayan sistemler.",
+                tagL: "LAZER / PNÖMATİK", tagR: "CİHAZ"
+            },
+            { 
+                name: "Ureteral Access Sheath", 
+                img: "Ureteral.Access.Sheath.jpg", 
+                link: "c8-access-sheath.html",
+                desc: "RIRS işlemlerinde böbreğe tekrarlı giriş-çıkışları kolaylaştıran kılıf.",
+                tagL: "ERİŞİM KILIFI", tagR: "ARA ELEMAN"
+            }
+        ];
+
+        function renderGrid(data) {
+            const grid = document.getElementById('deviceGrid');
+            grid.innerHTML = "";
+            data.forEach(item => {
+                const card = document.createElement('a'); // Artık bir link
+                card.href = item.link;
+                card.className = "device-card";
+                card.innerHTML = `
+                    <div class="device-img-box"><img src="assets/img/${item.img}"></div>
+                    <div class="device-info">
+                        <h2>${item.name}</h2>
+                        <p>${item.desc}</p>
+                    </div>
+                    <div class="device-footer">
+                        <span class="tag-text">${item.tagL}</span>
+                        <span class="tag-text">${item.tagR}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterDevices() {
+            const q = document.getElementById('liveSearch').value.toLowerCase();
+            renderGrid(devices.filter(d => d.name.toLowerCase().includes(q)));
+        }
+
+        renderGrid(devices);
+    </script>
+</body>
+</html>

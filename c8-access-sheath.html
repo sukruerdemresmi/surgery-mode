@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>NT | Ureteral Access Sheath Sistemleri</title>
+    <style>
+        :root {
+            --hugemed-blue: #005596;
+            --white: #ffffff;
+            --light-bg: #f4f7f9;
+            --text-dark: #333333;
+            --accent-orange: #f39c12;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: var(--white);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        header {
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-bottom: 2px solid var(--hugemed-blue);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-sizing: border-box;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--hugemed-blue);
+            font-weight: bold;
+            border: 2px solid var(--hugemed-blue);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover { background: var(--hugemed-blue); color: white; }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+
+        .title-section { text-align: center; margin-bottom: 50px; }
+        .title-section h1 { color: var(--hugemed-blue); font-size: 2.5rem; margin-bottom: 10px; }
+        .title-section p { font-style: italic; color: #666; }
+
+        /* --- ÜRÜN TÜRLERİ --- */
+        .type-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .type-card {
+            background: var(--light-bg);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid #ddd;
+            transition: 0.3s;
+        }
+
+        .type-card:hover { border-color: var(--hugemed-blue); transform: translateY(-5px); }
+        .type-card h2 { color: var(--hugemed-blue); margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        
+        /* Büyüteç efekti için imleç değişimi */
+        .type-img { 
+            width: 100%; 
+            height: 200px; 
+            object-fit: contain; 
+            background: white; 
+            border-radius: 10px; 
+            margin: 20px 0; 
+            cursor: zoom-in;
+            transition: 0.3s;
+        }
+        .type-img:hover { opacity: 0.9; }
+
+        /* --- ÖLÇÜ TABLOSU --- */
+        .table-section { background: var(--hugemed-blue); color: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,85,150,0.2); }
+        .table-section h2 { margin-top: 0; text-align: center; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            color: var(--text-dark);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid #eee; }
+        th { background: #eef2f5; color: var(--hugemed-blue); font-weight: bold; }
+        tr:hover { background: #f9f9f9; }
+
+        .info-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .info-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-orange);
+        }
+
+        /* --- BÜYÜTEÇ MODAL STİLLERİ --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        .modal.is-open { display: flex; }
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            border: 5px solid var(--white);
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="cihazlar.html" class="back-btn">← ALETLERE DÖN</a>
+        <div style="font-size: 20px; font-weight: 900; color: var(--hugemed-blue); letter-spacing: 2px;">NT | ACCESS SHEATH</div>
+    </header>
+
+    <div class="container">
+        <div class="title-section">
+            <h1>Üreteral Erişim Kılıfları</h1>
+            <p>Fleksible URS'ler için geliştirilmiş Fleksible-Hidrofilik Trokar</p>
+        </div>
+
+        <div class="type-grid">
+            <div class="type-card">
+                <h2>Standart Access Sheath</h2>
+                <img src="assets/img/standart-sheath.jpg" alt="Standart Access Sheath" class="type-img" onclick="openZoom(this)">
+                <p>En sık tercih edilen temel modeldir. Düşük sürtünme katsayısına sahip hidrofilik kaplaması sayesinde üretere travmasız giriş sağlar. Kink (bükülme) direnci yüksektir.</p>
+            </div>
+
+            <div class="type-card">
+                <h2>ClearPetra Access Sheath</h2>
+                <img src="assets/img/clearpetra-sheath.jpg" alt="ClearPetra Access Sheath" class="type-img" onclick="openZoom(this)">
+                <p><strong>Aspiratör Bağlantılı Özel Tasarım:</strong> Lazer ile taş kırma sırasında oluşan tozları ve parçacıkları eş zamanlı olarak dışarı vakumlar. Görüş alanını netleştirir ve böbrek içi basıncı düşürür.</p>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <h2>Teknik Ölçü Parametreleri</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>İç Çap (ID)</th>
+                        <th>Dış Çap (OD)</th>
+                        <th>Boy Seçenekleri (cm)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>9 Fr</td><td>11 Fr</td><td>30 - 35 - 40 - 45</td></tr>
+                    <tr><td>9.5 Fr</td><td>11.5 Fr</td><td>30 - 35 - 40 - 45</td></tr>
+                    <tr><td>11 Fr</td><td>13 Fr</td><td>30 - 35 - 40 - 45</td></tr>
+                    <tr><td>11.5 Fr</td><td>13.5 Fr</td><td>30 - 35 - 40 - 45</td></tr>
+                    <tr><td>12 Fr</td><td>14 Fr</td><td>30 - 35 - 40 - 45</td></tr>
+                    <tr><td>13 Fr</td><td>15 Fr</td><td>30 - 35 - 40 - 45</td></tr>
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <div class="info-item">
+                    <strong>Boy Seçimi:</strong> Klinik pratikte genellikle kadın hastalar için kısa boylar, erkek hastalar için ise uzun boylar (45 cm) tercih edilmektedir.
+                </div>
+                <div class="info-item">
+                    <strong>Kalınlık Kararı:</strong> Üreteral genişlik cerrah tarafından intraoperatif değerlendirilir ve uygun Fr (French) kalınlığına karar verilir.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="zoomModal" onclick="closeZoom()">
+        <img src="" class="modal-content" id="zoomedImg">
+    </div>
+
+    <footer style="text-align: center; padding: 40px; color: #999; font-size: 13px;">
+        &copy; 2026 Hugemed Medical - NT Teknik Dokümantasyon
+    </footer>
+
+    <script>
+        function openZoom(imgElement) {
+            const modal = document.getElementById('zoomModal');
+            const zoomedImg = document.getElementById('zoomedImg');
+            zoomedImg.src = imgElement.src;
+            modal.classList.add('is-open');
+        }
+
+        function closeZoom() {
+            document.getElementById('zoomModal').classList.remove('is-open');
+        }
+
+        // ESC tuşu ile kapatma desteği
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") closeZoom();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pensetler Katalog | Surgery - Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* TEMEL AYARLAR */
+        * { margin: 0; padding: 0; box-sizing: border-box; text-decoration: none; -webkit-font-smoothing: antialiased; }
+        body, html { height: 100%; width: 100%; font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e3a8a 100%); background-attachment: fixed; color: white; overflow-x: hidden; }
+
+        /* HEADER */
+        .top-header { width: 100%; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.5); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .back-btn { color: #fff; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; }
+
+        /* ANA DÜZEN */
+        .main-layout { display: flex; max-width: 1100px; margin: 30px auto; padding: 0 20px 140px 20px; gap: 30px; }
+
+        /* ARAMA SIDEBAR */
+        .sidebar { flex: 0 0 280px; display: flex; flex-direction: column; gap: 15px; }
+        .search-box { background: rgba(255, 255, 255, 0.1); border: 2px solid #38bdf8; border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 10px; }
+        .search-box input { background: transparent; border: none; color: white; width: 100%; outline: none; font-family: inherit; }
+        #resultsList { background: rgba(255, 255, 255, 0.05); border-radius: 15px; overflow: hidden; display: none; border: 1px solid rgba(255, 255, 255, 0.1); max-height: 400px; overflow-y: auto; }
+        .result-item { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.2s; font-size: 0.8rem; }
+        .result-item:hover { background: rgba(56, 189, 248, 0.2); }
+
+        /* LİSTE ALANI */
+        .content-area { flex: 1; }
+        .list-card { background: rgba(255, 255, 255, 0.05); border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.1); overflow: hidden; }
+        .product-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.3s; }
+        .product-row:hover { background: rgba(255, 255, 255, 0.08); }
+        .product-row h3 { font-size: 0.95rem; font-weight: 600; }
+        .info-badge { width: 22px; height: 22px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: 800; }
+
+        /* GENİŞ POP-UP (MODAL) SİSTEMİ */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.92); backdrop-filter: blur(20px); 
+            display: none; justify-content: center; align-items: center; 
+            z-index: 1000; padding: 15px;
+        }
+
+        .modal-content { 
+            background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.2); 
+            width: 95%; max-width: 900px; /* GENİŞLİK ARTIRILDI */
+            max-height: 90vh; border-radius: 40px; padding: 40px; 
+            text-align: center; position: relative; overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content img { 
+            width: 100%; max-width: 750px; background: white; 
+            border-radius: 25px; padding: 20px; margin-bottom: 25px; 
+            max-height: 450px; object-fit: contain; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-content h2 { color: #38bdf8; margin-bottom: 15px; font-size: 1.8rem; font-weight: 800; text-transform: uppercase; }
+
+        .modal-content p { 
+            color: #f1f5f9; font-size: 1.1rem; line-height: 1.7; 
+            text-align: left; background: rgba(15, 23, 42, 0.5); 
+            padding: 25px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .close-btn { 
+            margin-top: 30px; padding: 15px 55px; background: #fff; 
+            color: #000; border-radius: 100px; font-weight: 900; 
+            cursor: pointer; display: inline-block; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .close-btn:hover { background: #38bdf8; color: white; transform: scale(1.05); }
+
+        /* NT FOOTER */
+        .nt-footer { position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.85); padding: 15px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
+        .mini-logo { width: 38px; height: 38px; background: #fff; border-radius: 10px; color: #000; display: flex; justify-content: center; align-items: center; font-weight: 800; }
+
+        @media (max-width: 850px) { .main-layout { flex-direction: column; } .sidebar { flex: none; width: 100%; } .modal-content { padding: 25px; } }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <a href="aletler.html" class="back-btn">← GERİ</a>
+        <div style="font-weight: 800; font-size: 0.9rem;">PENSETLER</div>
+        <div style="width: 40px;"></div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="megaSearch" onkeyup="smartSearch()" placeholder="Penset ara...">
+            </div>
+            <div id="resultsList"></div>
+        </aside>
+
+        <main class="content-area">
+            <div class="list-card" id="mainList"></div>
+        </main>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modalImg" src="" alt="">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDesc"></p>
+            <div class="close-btn" onclick="closeModal()">KAPAT</div>
+        </div>
+    </div>
+
+    <div class="nt-footer">
+        <div class="mini-logo">NT</div>
+        <p style="font-size:0.55rem; color:#888; margin-top:5px;">Şükrü ERDEM © 2026</p>
+    </div>
+
+    <script>
+        const pensetler = [
+            { name: "Adams Doku Penseti", img: "adamsdokupenseti.jpg", desc: "Plastik cerrahi ve KBB operasyonlarında kullanılan, narin uçlu ve 1x2 dişli penset." },
+            { name: "Bayonet Dişsiz Penset", img: "bayonetdissizpenseti.jpg", desc: "Beyin cerrahisi ve KBB operasyonlarında derin kavitelerde mükemmel görüş alanı sağlar." },
+            { name: "Bonney Doku Penseti", img: "bonneydokupenseti.jpg", desc: "Ortopedik ve jinekolojik cerrahide kullanılan güçlü, dişli yapılı ağır doku penseti." },
+            { name: "Brigham Pansuman Penseti", img: "brighampansumanpenseti.jpg", desc: "Geniş ve tırtıklı tutma yüzeyine sahip, deri kapatma ve yoğun pansuman için ideal." },
+            { name: "Brown-Adson Doku Penseti", img: "brownadsonpenseti.jpg", desc: "Çok sayıda küçük diş barındıran hassas kavrama sağlayan tasarım. 7x7 veya 9x9 diş yapısı." },
+            { name: "Carmalt Kıymık Pensi", img: "carmaltpenset.jpg", desc: "Yabancı cisimleri doku içinden hassas bir şekilde çıkarmak için sivri ve düz uçlu." },
+            { name: "Cerrahi Penset", img: "cerrahipenset.jpg", desc: "Dokuları, damarları veya pansuman malzemelerini tutmak için temel cerrahi el aleti." },
+            { name: "Coronary Ultra-Fine Doku Penseti", img: "coronaryultrafinedokupenseti.jpg", desc: "Kalp damar cerrahisi ve mikro cerrahi için 0.5 mm'den küçük son derece hassas uç." },
+            { name: "Crafoord Doku Penseti", img: "crafoorddokupenseti.jpg", desc: "Göğüs ve damar cerrahisi için uzun, ince ve atravmatik tırtıklı yapı." },
+            { name: "C.W. Mayo Doku Penseti", img: "CWmayodokupenseti.jpg", desc: "Genel cerrahi ve jinekolojide derin kavitelerdeki dirençli yapıları güvenle kavrar." },
+            { name: "Davis Doku Penseti", img: "davisdokupenseti.jpg", desc: "Derin doku ve karın operasyonları için uzun, dişli ve dayanıklı bir alet." },
+            { name: "DeBakey Damar Penseti", img: "debakeydamarpenseti.jpg", desc: "Damar cerrahisinin altın standardı; dokuyu ezmeden mükemmel tutuş sağlayan atravmatik uç." },
+            { name: "Adson-DeBakey Doku Penseti", img: "debakeydokupenseti.jpg", desc: "Adson gövde yapısını DeBakey atravmatik uçlarıyla birleştiren hibrit penset." },
+            { name: "Dişli Adson Penset (Geniş)", img: "disliadsondokupenseti.jpg", desc: "Dermatoloji ve plastik cerrahide cilt kapatma için narin dişli yapı." },
+            { name: "Dişli Adson Penseti", img: "disliadsonpenseti.jpg", desc: "1x2 diş yapısına sahip, deri dokusunu kaymadan tutmayı sağlayan ince uçlu penset." },
+            { name: "Dişsiz Adson Penset", img: "dissizadsonpenset.jpg", desc: "Hassas dokulara zarar vermeden güvenli bir kavrama sağlayan tırtıklı ama dişsiz uç." },
+            { name: "Adson TC Dişsiz Penseti", img: "dissizadsontcpenset.jpg", desc: "Tungsten Karbür (TC) uçlarla güçlendirilmiş, uzun ömürlü altın saplı model." },
+            { name: "Ewald Dişsiz Penset", img: "dissizewaldpenset.jpg", desc: "Deri altı dokular için geniş tırtıklı ve ergonomik gövdeli tasarım." },
+            { name: "Dişsiz Penset (Standart)", img: "dissizpenset.jpg", desc: "Müdahaleler sırasında sargı bezi ve pansuman materyali tutmak için temel alet." },
+            { name: "Dişsiz Şişman Adson Penset", img: "dissizşişmanadsonpenset.jpg", desc: "Plastik cerrahide hassas dokular için geniş gövdeli ve çok ince uçlu varyasyon." },
+            { name: "Doku Koter Penseti", img: "dokukoterpenseti.jpg", desc: "Cerrahi kanamalarda koter ile kontrol sağlamak için kullanılan özel penset." },
+            { name: "Düz Sivri Koter Penseti", img: "duzsivrikoterpenset.jpg", desc: "Mikrocerrahide küçük damarların hedeflenerek yakılmasını sağlayan sivri uçlu yapı." },
+            { name: "Düz Sivri Penset", img: "duzsivripenset.jpg", desc: "Yüzeyel müdahalelerde yüksek hassasiyet sağlayan tırtıksız pens." },
+            { name: "Eğri İnce Uçlu Pansuman Penseti", img: "egriinceuclupansumanpenseti.jpg", desc: "Derin veya dar alanlarda hassas doku ve malzeme kavrama için kavisli ince uç." },
+            { name: "Süngü (Bayonet) Tipi Dişsiz Penset", img: "egriuclubayonetpenset.jpg", desc: "Süngü gövdesi sayesinde dar kavitelerde net bir görüş alanı sunar." },
+            { name: "Ewald Doku Penseti", img: "ewalddokupenseti.jpg", desc: "Geniş tutma alanı sayesinde yüksek kontrol sağlayan dişli diseksiyon pensi." },
+            { name: "Feilchenfeld Kıymık Penseti", img: "feilchenfeldpenset.jpg", desc: "Küçük yabancı cisimleri çıkarmak için tasarlanmış geniş saplı hassas alet." },
+            { name: "Gerald Dişsiz Koter Penseti", img: "geralddissizkoterpenseti.jpg", desc: "Vasküler ve nöroşirürji için son derece ince ve uzun yapılı koter pensi." },
+            { name: "Gerald TC Dişsiz Koter Penseti", img: "geraldtcdissizkoterpenseti.jpg", desc: "Tungsten Karbür plakalarla güçlendirilmiş dayanıklı Gerald modeli." },
+            { name: "Graefe Doku Penseti", img: "graefedokupenseti.jpg", desc: "Oftalmoloji (göz) için son derece küçük ve narin dişli yapıya sahip penset." },
+            { name: "Gruenwald Bayonet Penset", img: "gruenwaldbayonetpenset.jpg", desc: "KBB ve beyin cerrahisi için dirsekli gövde tasarımına sahip penset." },
+            { name: "Gutsch Bayonet Dişsiz Penset", img: "gutschbayonetdissizpenseti.jpg", desc: "Derin kaviteler ve Gutsch tipi tutuş özelliklerini birleştiren özel alet." },
+            { name: "Gutsch TC Dişsiz Klembi", img: "gutschdissizklembi.jpg", desc: "Hassas sinir dokuları ve damarlar için Tungsten Karbür takviyeli güvenli tutuş." },
+            { name: "Hudson Doku Penseti", img: "hudsondokupenseti.jpg", desc: "Biyopsi örnekleri ve dirençli dokular için geniş tırtıklı ve dişli yapı." },
+            { name: "Iris Dişsiz Penseti", img: "irisdissizpenseti.jpg", desc: "KBB ve göz cerrahisi için 10 cm boyunda çok ince uçlu küçük penset." },
+            { name: "Iris Doku Penseti", img: "irisdokupenseti.jpg", desc: "Hassas doku manipülasyonu için 1x2 narin dişli yapı." },
+            { name: "Jansen Bayonet Dişsiz Penset", img: "jansenbayonetdissizpenset.jpg", desc: "Kulak ve burun boşlukları için karakteristik dirsekli forma sahip penset." },
+            { name: "Kıymık İğnesi", img: "kiymikignesi.jpg", desc: "Batmış cam, diken gibi debrizleri kaldırmak ve çıkarmak için özel uç." },
+            { name: "Lucae Bayonet Dişsiz Penset", img: "lucaebayonetdissizpenset.jpg", desc: "KBB cerrahisinde kulak tamponu gibi malzemeleri tutmak için ergonomik tasarım." },
+            { name: "Potts-Smith Pansuman Penseti", img: "pottssmithpansumanpenseti.jpg", desc: "Derin vücut boşlukları ve damar cerrahisi için tasarlanmış uzun ve ince alet." },
+            { name: "Potts-Smith Technique TC Penseti", img: "pottssmithtcpansumanpenseti.jpg", desc: "Mikro cerrahi için TC uçlu, altın saplı teknik pansuman penseti." },
+            { name: "Russian Doku Penseti", img: "russiandokupenseti.jpg", desc: "Kaşık benzeri fincan uçları sayesinde organları ezmeden çok güçlü kavrar." },
+            { name: "Selman Doku Penseti", img: "selmandokupenseti.jpg", desc: "Damar cerrahisi ve dikiş materyalleri için atravmatik ince tırtıklı penset." },
+            { name: "Semken Dişsiz Penset", img: "semkendissizpenset.jpg", desc: "Dar boşluklarda hassas dokular için Adson'dan daha ince ve uzun yapı." },
+            { name: "Semken Pansuman Penseti", img: "semkenpansumanpenseti.jpg", desc: "Plastik cerrahi ve KBB branşlarında küçük materyaller için narin yapı." },
+            { name: "Singley Doku Penseti", img: "singleydokupenseti.jpg", desc: "Akciğer segmentleri gibi kaygan yapıların güvenli diseksiyonu için halka uçlu." },
+            { name: "TC Dişsiz Penset", img: "tcdissizpenset.jpg", desc: "Aşınmaya dirençli Tungsten Karbür uçlu, altın saplı uzun ömürlü penset." },
+            { name: "Thumb Tissue Forceps (Dişli)", img: "thumbtissueforceps.jpg", desc: "Deri ve faysa manipülasyonu için temel dişli cilt penseti." },
+            { name: "Thumb Dişli Penset (2x3)", img: "thumbtissueforceps2x3.jpg", desc: "Kalın veya kaygan dokuları çok daha güçlü kavrayan 2x3 dişli model." },
+            { name: "Tuttle Toraks Doku Penseti", img: "tuutletoraksdokupenseti.jpg", desc: "Akciğer cerrahisi ve plevra için kendine özgü dairesel halka uçlu alet." },
+            { name: "Wheeler Technique Plak/Damar Penseti", img: "wheelerteknikplakvedamarpenseti.jpg", desc: "Damar içindeki aterosklerotik plakların dokuya zarar vermeden temizlenmesi için tasarlanmış üst düzey hassasiyetli alet." }
+        ];
+
+        function initList() {
+            const list = document.getElementById('mainList');
+            pensetler.sort((a, b) => a.name.localeCompare(b.name)).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'product-row';
+                row.onclick = () => openModal(item);
+                row.innerHTML = `<h3>${item.name}</h3><div class="info-badge">i</div>`;
+                list.appendChild(row);
+            });
+        }
+
+        function smartSearch() {
+            let input = document.getElementById('megaSearch').value.toUpperCase();
+            let resultsDiv = document.getElementById('resultsList');
+            let mainList = document.getElementById('mainList');
+            resultsDiv.innerHTML = ''; mainList.style.opacity = (input.length < 2) ? "1" : "0.3";
+            if (input.length < 2) { resultsDiv.style.display = 'none'; return; }
+            let filtered = pensetler.filter(item => item.name.toUpperCase().includes(input));
+            if (filtered.length > 0) {
+                resultsDiv.style.display = 'block';
+                filtered.forEach(item => {
+                    let div = document.createElement('div');
+                    div.className = 'result-item'; div.innerHTML = item.name;
+                    div.onclick = () => openModal(item); resultsDiv.appendChild(div);
+                });
+            } else { resultsDiv.style.display = 'none'; }
+        }
+
+        function openModal(item) {
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalDesc').innerText = item.desc;
+            document.getElementById('modalImg').src = 'assets/img/' + item.img;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+
+        initList();
+    </script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>NT | Quanta Cyber Ho Interaktif Sunum</title>
+    <style>
+        :root {
+            --quanta-blue: #0082c1;
+            --white: #ffffff;
+            --black: #000000;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- ÜST NAVİGASYON --- */
+        header {
+            width: 100%;
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid #333;
+            box-sizing: border-box;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--white);
+            border: 1px solid var(--white);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        /* --- ANA SAHNE --- */
+        .stage {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .device-wrapper {
+            position: relative;
+            line-height: 0;
+        }
+
+        .main-img {
+            width: 800px;
+            height: auto;
+        }
+
+        /* --- VAPORTUNEL VİDEO ALANI --- */
+        .video-container {
+            position: absolute;
+            top: 5%;
+            right: -250px; /* Kırmızı ile çizdiğin alan tahmini */
+            width: 300px;
+            border: 2px solid var(--quanta-blue);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 130, 193, 0.4);
+        }
+
+        .side-video {
+            width: 100%;
+            display: block;
+        }
+
+        /* --- MAVİ HOTSPOT NOKTALARI --- */
+        .hotspot {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: rgba(0, 130, 193, 0.5);
+            border: 2px solid var(--quanta-blue);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 0 15px var(--quanta-blue);
+            transition: 0.3s;
+        }
+
+        .hotspot:hover {
+            transform: scale(1.3);
+            background: var(--quanta-blue);
+        }
+
+        /* Koordinatlar (Görseline göre) */
+        #pt-screen { top: 30%; left: 49%; }  /* En üst ekran */
+        #pt-key    { top: 44%; left: 43%; }  /* Sol orta anahtar */
+        #pt-fiber  { top: 45%; left: 56%; }  /* Sağ orta fiber */
+        #pt-pedal  { top: 85%; left: 50%; }  /* En alt ayak */
+
+        /* --- MODAL (POP-UP) --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            position: relative;
+            background: var(--white);
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+            border: 4px solid var(--quanta-blue);
+        }
+
+        .modal-img {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+            border-radius: 5px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px; right: 0;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        /* --- GALERİ NAVİGASYONU (Sadece Ekran İçin) --- */
+        .gallery-nav {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+
+        .nav-arrow {
+            pointer-events: auto;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            font-size: 40px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="c7-tas-kirma.html" class="back-btn">← SİSTEMLERE DÖN</a>
+        <div style="font-size: 20px; font-weight: bold; letter-spacing: 2px;">QUANTA CYBER HO</div>
+        <div style="width: 100px;"></div> </header>
+
+    <div class="stage">
+        <div class="device-wrapper">
+            <img src="assets/img/cyber.jpg" alt="Quanta Cyber Ho" class="main-img">
+
+            <div class="hotspot" id="pt-screen" onclick="openGallery()"></div>
+            <div class="hotspot" id="pt-key" onclick="openSimpleModal('assets/img/calisma-anahtari.jpg')"></div>
+            <div class="hotspot" id="pt-fiber" onclick="openSimpleModal('assets/img/fiber-baglanti.jpg')"></div>
+            <div class="hotspot" id="pt-pedal" onclick="openSimpleModal('assets/img/quanta_ayak.jpg')"></div>
+
+            <div class="video-container">
+                <video autoplay muted loop class="side-video">
+                    <source src="assets/img/vaportunel.mp4" type="video/mp4">
+                </video>
+                <div style="padding: 5px; text-align: center; font-size: 12px; background: var(--quanta-blue);">VAPOR TUNNEL™ TECHNOLOGY</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="simpleModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('simpleModal')">&times;</span>
+            <img src="" id="modalImg" class="modal-img">
+        </div>
+    </div>
+
+    <div class="modal" id="galleryModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('galleryModal')">&times;</span>
+            <img src="assets/img/ekran-1.jpg" id="galleryImg" class="modal-img">
+            
+            <div class="gallery-nav">
+                <button class="nav-arrow" onclick="changeImg(-1)">&#10094;</button>
+                <button class="nav-arrow" onclick="changeImg(1)">&#10095;</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Basit Modal Fonksiyonu
+        function openSimpleModal(imgSrc) {
+            document.getElementById('modalImg').src = imgSrc;
+            document.getElementById('simpleModal').classList.add('active');
+        }
+
+        // Galeri Fonksiyonları
+        const screens = ['assets/img/ekran-1.jpg', 'assets/img/ekran-2.jpg', 'assets/img/ekran-3.jpg'];
+        let currentIdx = 0;
+
+        function openGallery() {
+            currentIdx = 0;
+            document.getElementById('galleryImg').src = screens[currentIdx];
+            document.getElementById('galleryModal').classList.add('active');
+        }
+
+        function changeImg(dir) {
+            currentIdx += dir;
+            if (currentIdx < 0) currentIdx = screens.length - 1;
+            if (currentIdx >= screens.length) currentIdx = 0;
+            document.getElementById('galleryImg').src = screens[currentIdx];
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Dışarı tıklayınca kapatma
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+
+</body>
+</html>

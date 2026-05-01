@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuel Ekartörler Katalog | Surgery - Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* TEMEL AYARLAR */
+        * { margin: 0; padding: 0; box-sizing: border-box; text-decoration: none; -webkit-font-smoothing: antialiased; }
+        body, html { height: 100%; width: 100%; font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e3a8a 100%); background-attachment: fixed; color: white; overflow-x: hidden; }
+
+        /* HEADER */
+        .top-header { width: 100%; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.5); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .back-btn { color: #fff; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; }
+
+        /* ANA DÜZEN */
+        .main-layout { display: flex; max-width: 1100px; margin: 30px auto; padding: 0 20px 140px 20px; gap: 30px; }
+
+        /* SIDEBAR & SEARCH */
+        .sidebar { flex: 0 0 280px; display: flex; flex-direction: column; gap: 15px; }
+        .search-box { background: rgba(255, 255, 255, 0.1); border: 2px solid #a855f7; border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 10px; }
+        .search-box input { background: transparent; border: none; color: white; width: 100%; outline: none; font-family: inherit; }
+        #resultsList { background: rgba(255, 255, 255, 0.05); border-radius: 15px; overflow: hidden; display: none; border: 1px solid rgba(255, 255, 255, 0.1); max-height: 400px; overflow-y: auto; }
+        .result-item { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.2s; font-size: 0.8rem; }
+        .result-item:hover { background: rgba(168, 85, 247, 0.2); }
+
+        /* LİSTE TASARIMI */
+        .content-area { flex: 1; }
+        .list-card { background: rgba(255, 255, 255, 0.05); border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.1); overflow: hidden; }
+        .product-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.3s; }
+        .product-row:hover { background: rgba(255, 255, 255, 0.08); }
+        .product-row h3 { font-size: 0.9rem; font-weight: 600; }
+        .info-badge { width: 22px; height: 22px; background: rgba(168, 85, 247, 0.2); color: #a855f7; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: 800; }
+
+        /* GENİŞ POP-UP (MODAL) SİSTEMİ */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); backdrop-filter: blur(20px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
+        .modal-content { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.2); width: 95%; max-width: 900px; max-height: 90vh; border-radius: 40px; padding: 40px; text-align: center; position: relative; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .modal-content img { width: 100%; max-width: 750px; background: white; border-radius: 25px; padding: 20px; margin-bottom: 25px; max-height: 450px; object-fit: contain; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .modal-content h2 { color: #a855f7; margin-bottom: 15px; font-size: 1.8rem; font-weight: 800; text-transform: uppercase; }
+        .modal-content p { color: #f1f5f9; font-size: 1.1rem; line-height: 1.7; text-align: left; background: rgba(15, 23, 42, 0.5); padding: 25px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .close-btn { margin-top: 30px; padding: 15px 55px; background: #fff; color: #000; border-radius: 100px; font-weight: 900; cursor: pointer; display: inline-block; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .close-btn:hover { background: #a855f7; color: white; transform: scale(1.05); }
+
+        .nt-footer { position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.85); padding: 15px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
+        .mini-logo { width: 38px; height: 38px; background: #fff; border-radius: 10px; color: #000; display: flex; justify-content: center; align-items: center; font-weight: 800; }
+        @media (max-width: 850px) { .main-layout { flex-direction: column; } .sidebar { flex: none; width: 100%; } .modal-content { padding: 25px; } }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <a href="aletler.html" class="back-btn">← GERİ</a>
+        <div style="font-weight: 800; font-size: 0.9rem; letter-spacing: 1px;">MANUEL EKARTÖRLER</div>
+        <div style="width: 40px;"></div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="megaSearch" onkeyup="smartSearch()" placeholder="Enstrüman ara...">
+            </div>
+            <div id="resultsList"></div>
+        </aside>
+        <main class="content-area">
+            <div class="list-card" id="mainList"></div>
+        </main>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modalImg" src="" alt="">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDesc"></p>
+            <div class="close-btn" onclick="closeModal()">KAPAT</div>
+        </div>
+    </div>
+
+    <div class="nt-footer">
+        <div class="mini-logo">NT</div>
+        <p style="font-size:0.55rem; color:#888; margin-top:5px;">Şükrü ERDEM © 2026</p>
+    </div>
+
+    <script>
+        const ekartorler = [
+            { name: "Allison Akciğer Ekartörü", img: "allisonekartoru.jpg", desc: "Göğüs cerrahisinde akciğer dokusunu nazikçe geri çekmek için kullanılan geniş, kürek uçlu manuel ekartör." },
+            { name: "Army-Navy Ekartörü", img: "armyekartoru.jpg", desc: "Hem derin hem yüzeyel dokuları çekmek için iki farklı uca sahip, cerrahinin en temel çift taraflı manuel ekartörü." },
+            { name: "Brewster Ekartör", img: "brewsterekartor.jpg", desc: "Derin kavitelerde güçlü doku traksiyonu sağlamak için tasarlanmış geniş ağızlı manuel ekartör." },
+            { name: "Brewster Frenik Ekartör", img: "brewsterfrenikekartor.jpg", desc: "Özellikle frenik sinir bölgesini koruyarak geri çekmek için tasarlanmış spesifik göğüs cerrahisi modeli." },
+            { name: "Children's Hospital Ekartörü", img: "childrenshospitalekartoru.jpg", desc: "Pediatrik cerrahide küçük ve narin dokuları çekmek için tasarlanmış küçük ölçekli hassas alet." },
+            { name: "Converse Cilt Ekartörü", img: "converseciltekartoru.jpg", desc: "Plastik cerrahide cilt kanatlarını (flap) tutmak için kullanılan ince uçlu, parmak halkalı ekartör." },
+            { name: "Cooley Atriyum Ekartörü", img: "cooleyatriyumekartoru.jpg", desc: "Kalp cerrahisinde atriyumu açık tutarak kapağa erişim sağlayan özel kavisli alet." },
+            { name: "Cottle Ala Ekartörü", img: "cottlealarekartoru.jpg", desc: "Rinoplasti operasyonlarında burun kanatlarını yukarı çekmek için kullanılan nazal ekartör." },
+            { name: "Crile Ekartörü", img: "crileekartoru.jpg", desc: "Yüzeyel yaraları veya damar yollarını açığa çıkarmak için kullanılan 'L' uçlu manuel ekartör." },
+            { name: "Cushing Dekompresyon Ekartörü", img: "cushingdekompresyonekartoru.jpg", desc: "Beyin cerrahisinde sinir köklerini nazikçe kenara çekmek için kullanılan küret uçlu alet." },
+            { name: "Dandy Sinir Ekartörü", img: "dandysinirekartoru.jpg", desc: "Nöroşirürjide hassas sinir köklerini koruyarak kenara çekmek için kullanılan ince kavisli uç." },
+            { name: "Davidson Skapula Ekartörü", img: "davidsonskapulaekartoru.jpg", desc: "Torasik cerrahide skapulayı (kürek kemiği) yukarı kaldırmak için tasarlanmış geniş, basamaklı ekartör." },
+            { name: "Davis Beyin Spatulası", img: "davisbeyinspatulasi.jpg", desc: "Beyin dokusunu geniş yüzeyle, zarar vermeden ekarte etmek için kullanılan esnek metal şerit." },
+            { name: "Davis Ekartörü", img: "davisekartoru.jpg", desc: "Batın ve derin kavitelerde dokuları ekarte etmek için kullanılan saplı manuel ekartör." },
+            { name: "Deaver Ekartörü", img: "deaverekartoru.jpg", desc: "Karın duvarını veya organları çekmek için kullanılan soru işareti şeklindeki ikonik derin ekartör." },
+            { name: "DeBakey-Cooley Ekartörü", img: "debakeycooleyekartoru.jpg", desc: "Damar ve kalp cerrahisinde kaviteleri görüşü kapatmadan ekarte eden atravmatik alet." },
+            { name: "Deep Deaver Ekartörü", img: "deepdeaverekartoru.jpg", desc: "Standart Deaver'ın daha derin kaviteler için tasarlanmış uzun ve geniş versiyonu." },
+            { name: "Deep Rake Ekartörü", img: "deeprakeekartor.jpg", desc: "Derin doku katmanlarını tırmık benzeri dişleriyle güçlü şekilde çekmek için kullanılır." },
+            { name: "Dingman Zygoma Ekartörü", img: "dingmanzygomaekartoru.jpg", desc: "Maksillofasiyal cerrahide elmacık kemiği bölgesindeki dokuları ekarte etmek için kullanılan spesifik alet." },
+            { name: "Dittel Üretral Dilatörler", img: "ditteluretraldilatorler.jpg", desc: "Ürolojide üretral daralmaları kademeli olarak genişletmek için kullanılan metal bujiler." },
+            { name: "Doyen Ekartörü", img: "doyenekartoru.jpg", desc: "Pelvik operasyonlarda mesaneyi veya karın duvarını geniş yüzeyle geri çekmek için kullanılır." },
+            { name: "Emmett Uterin Prob", img: "emmettuterinprob.jpg", desc: "Jinekolojide uterusun derinliğini ve açısını belirlemek için kullanılan ucu küt metal çubuk." },
+            { name: "Extra Deep Deaver", img: "extradeepdeaverekartoru.jpg", desc: "Obez hastalarda veya en derin pelvis operasyonlarında kullanılan devasa Deaver modeli." },
+            { name: "Facelift Ekartörü", img: "faceliftekartoru.jpg", desc: "Yüz germe operasyonlarında deri kanatlarını nazikçe kaldırmak için kullanılan özel uçlu ekartör." },
+            { name: "Farabeuf Ekartörü", img: "farabeufekartoru.jpg", desc: "Ortopedi ve genel cerrahide kullanılan 'L' formunda çift taraflı temel manuel ekartör." },
+            { name: "Fistül Probu", img: "fistulprobu.jpg", desc: "Fistül kanallarının yönünü ve derinliğini belirlemek için kullanılan bükülebilir metal kılavuz." },
+            { name: "Flexible Rake Ekartör", img: "flexiblerakereractorciltekartoru.jpg", desc: "Plastik cerrahide cilt tabakasını travmasız geri çekmek için esnek pençe uçlu ekartör." },
+            { name: "Fomon Ekartörü", img: "fomonekartoru.jpg", desc: "Burun estetiğinde kanatları yukarı çekmek için kullanılan iki toplu uçlu nazal ekartör." },
+            { name: "Freer Cilt Ekartörü", img: "freerciltekartoru.jpg", desc: "Küçük kesilerde dokuların geri çekilmesi için kullanılan narin yapılı 'L' uçlu manuel alet." },
+            { name: "Freer Ekartör (Spatula)", img: "freerekartoru.jpg", desc: "Hem dokuyu kaldırmak hem ekarte etmek için kullanılan çift taraflı spatula." },
+            { name: "Gillies/Converse Cilt Ekartörü", img: "gilliesconverseciltekartoru.jpg", desc: "Plastik cerrahide cilt kanatlarını kaldırmak için kullanılan ucu çengelli narin ekartör." },
+            { name: "Goelet Ekartörü", img: "goeletekartoru.jpg", desc: "Yüzeyel dokuları ekarte etmek için her iki ucu farklı genişlikte olan çift taraflı ekartör." },
+            { name: "Graves Vajinal Spekulum", img: "gravesvajinalspekulum.jpg", desc: "Jinekolojik muayenelerde vajinal duvarları açan ayarlanabilir vidalı klasik spekulum." },
+            { name: "Green Ekartör", img: "greenekartor.jpg", desc: "Boyun operasyonlarında yumuşak dokuları travmasız çekmek için kullanılan pencereli ekartör." },
+            { name: "Guthrie Cilt Ekartörü", img: "guthrieciltekartoru.jpg", desc: "Küçük kesilerde deri kenarlarını tutmak için kullanılan ince pençe uçlu alet." },
+            { name: "Haight Ekartörü", img: "haightekartoru.jpg", desc: "Torasik cerrahide kaburgalar arasından akciğer yapılarını ekarte eden açılı ekartör." },
+            { name: "Hank Uterin Dilatatör", img: "hankuterindilator.jpg", desc: "Rahim ağzını kademeli genişletmek için kullanılan çift uçlu ve boğumlu metal çubuk." },
+            { name: "Harrington Ekartörü", img: "harringtonekartoru.jpg", desc: "'Sweetheart' olarak da bilinen organ koruyucu kalp uçlu derin batın ekartörü." },
+            { name: "Harrington Extra Deep", img: "harringtonextradeepekartoru.jpg", desc: "Ekstra uzun gövdeli Harrington modeli; çok derin pelvik boşluklar içindir." },
+            { name: "Harrington Splanchnic", img: "harringtonsplanchnicekartoru.jpg", desc: "Derin iç organ yapılarını hassasça ekarte etmek için kullanılan zarif uçlu model." },
+            { name: "Hulka Tenakulum ve Prob", img: "hulkatenakulumveprob.jpg", desc: "Rahmi manipüle etmek ve derinliği ölçmek için kullanılan kombine jinekolojik alet." },
+            { name: "Infant Ekartörü", img: "infantekartoru.jpg", desc: "Bebek operasyonları için tasarlanmış son derece küçük boyutlu manuel ekartör." },
+            { name: "Israel Ekartör", img: "israelekartor.jpg", desc: "Geniş tırmık ucuyla kalın doku katmanlarını geri çekmek için kullanılan güçlü ekartör." },
+            { name: "Jackson Trakea Ekartörü", img: "jacksontrakeaekartoru.jpg", desc: "Trakeostomi sırasında soluk borusu kenarlarını açmak için kullanılan spesifik alet." },
+            { name: "Jackson Trakeal Tenakulum", img: "jacksontrakealtenakulum.jpg", desc: "Trakea kıkırdağını tutup sabitlemek için kullanılan tek dişli keskin kanca." },
+            { name: "Johnson Cilt Ekartörü", img: "johnsonciltekartoru.jpg", desc: "Plastik cerrahide deri kenarlarını çekmek için kullanılan narin tırmık tipi ekartör." },
+            { name: "Joseph Cilt Ekartörü", img: "josephciltekartoru.jpg", desc: "Rinoplastide burun derisini kaldırmak için kullanılan iki dişli keskin ekartör." },
+            { name: "Kelly Ekartörü", img: "kellyekartoru.jpg", desc: "Derin batın cerrahisinde karın duvarını geri çekmek için kullanılan geniş ağızlı ekartör." },
+            { name: "Kleinert-Ragnell Ekartörü", img: "kleinertragnellekartoru.jpg", desc: "El cerrahisi gibi alanlarda kullanılan çift taraflı narin manuel ekartör." },
+            { name: "Kogan Endoservikal Spekulum", img: "koganendoservikalspekulum.jpg", desc: "Rahim ağzı kanalı içini gözlemlemek için kullanılan ayarlanabilir jinekolojik spekulum." },
+            { name: "Lahey Ekartörü", img: "laheyekartoru.jpg", desc: "Tiroid ve yüzeyel doku operasyonlarında kullanılan ince gövdeli, dik açılı manuel ekartör." },
+            { name: "Langenbeck Ekartörü", img: "langenbeckekartoru.jpg", desc: "Yumuşak doku ve yara kenarlarını ekarte etmek için kullanılan temel 'L' uçlu cerrahi alet." },
+            { name: "Little Ekartörü", img: "littlerekartoru.jpg", desc: "Küçük kesilerde doku traksiyonu sağlamak için kullanılan parmak halkalı narin ekartör." },
+            { name: "Love Sinir Ekartörü", img: "lovesinirekartoru.jpg", desc: "Nöroşirürjide sinir köklerini travma yaratmadan kenara çekmek için tasarlanmış kavisli uç." },
+            { name: "Lukens Timus Ekartörü", img: "lukenstimusekartoru.jpg", desc: "Pediatrik göğüs cerrahisinde timus bezini ekarte etmek için kullanılan narin model." },
+            { name: "Mayo Abdominal Ekartör", img: "mayoabdominalekartoru.jpg", desc: "Karın duvarını çekmek için kullanılan geniş ve derin ağızlı, yüksek traksiyonlu saplı ekartör." },
+            { name: "Mayo-Collins Ekartörü", img: "mayocollinsekartoru.jpg", desc: "Farklı derinliklerdeki dokuları ekarte edebilen çift taraflı manuel enstrüman." },
+            { name: "Meyerding Parmak Ekartörü", img: "meyerdingparmakekartoru.jpg", desc: "Omurga cerrahisinde kasları geri çekmek için kullanılan tırtıklı uçlu ve parmak halkalı güçlü alet." },
+            { name: "Mueller Tırmık Ekartör", img: "muellertirmikekartor.jpg", desc: "Yüzeyel doku traksiyonu için pençe uçlu tırmık tipi manuel ekartör." },
+            { name: "Murphy Tırmık Ekartörü", img: "murphytirmikekartoru.jpg", desc: "Sert doku üzerindeki yumuşak dokuları çekmek için kullanılan parmak boşluklu tırmık ekartör." },
+            { name: "Nazal Işıklı Ekartör", img: "nazalisikliekartoru.jpg", desc: "Nazal cerrahide derin boşlukları ekarte ederken aynı zamanda aydınlatma sağlayan fiber optik uyumlu alet." },
+            { name: "New’s Trakea Ekartörü", img: "newstrakeaekartoru.jpg", desc: "Trakeostomi sırasında trakea kenarlarını açmak için kullanılan keskin uçlu manuel ekartör." },
+            { name: "Parker Ekartörü", img: "parkerekartoru.jpg", desc: "Yüzeyel dokuları çekmek için kullanılan çift taraflı, 'C' kavisli uçlara sahip manuel ekartör." },
+            { name: "Parker-Mott Ekartörü", img: "parkermottekartoru.jpg", desc: "Orta derinlikteki dokuların traksiyonu için tasarlanmış, Parker modelinin daha geniş versiyonu." },
+            { name: "Pederson Vajinal Spekulum", img: "pedersonvajinalspekulum.jpg", desc: "Dar vajinal yapılarda tercih edilen, ince ve düz bıçaklı jinekolojik spekulum." },
+            { name: "Ragnell Ekartörü", img: "ragnellekartoru.jpg", desc: "El ve mikro cerrahide kullanılan çift taraflı narin 'L' uçlu manuel ekartör." },
+            { name: "Ribbon (Malleable) Ekartör", img: "ribbonekartoru.jpg", desc: "Organları korumak için cerrah tarafından istenen şekle sokulabilen esnek metal şerit ekartör." },
+            { name: "Richardson Apendektomi", img: "richardsonapendektomiekartoru.jpg", desc: "Apendektomi kesilerinde dar alan traksiyonu sağlamak için tasarlanmış Richardson modeli." },
+            { name: "Richardson-Eastman", img: "richardsoneastmanekartoru.jpg", desc: "Karın duvarı ve kalın dokuları çekmek için kullanılan çift taraflı, geniş ağızlı ağır ekartör." },
+            { name: "Richardson Ekartörü", img: "richardsonekartoru.jpg", desc: "Karın duvarını geri çekmek için kullanılan cerrahinin en temel saplı manuel ekartörlerinden biri." },
+            { name: "Roux Ekartörü", img: "rouxekartoru.jpg", desc: "Yüzeyel doku ve kas katmanlarını ekarte etmek için kullanılan çift taraflı, 'C' formunda manuel ekartör." },
+            { name: "Sauerbruch Ekartörü", img: "sauerbruchekartoru.jpg", desc: "Göğüs cerrahisinde akciğer veya derin dokuları geri çekmek için kullanılan geniş ağızlı saplı ekartör." },
+            { name: "S Ekartörü", img: "sekartoru.jpg", desc: "Karın ve pelvik cerrahide derin doku traksiyonu sağlayan, karakteristik 'S' formunda çift taraflı ekartör." },
+            { name: "Semb Ekartörü", img: "sembekartoru.jpg", desc: "Torasik cerrahide mediastinal yapıları ekarte etmek için kullanılan kavisli ve uzun gövdeli model." },
+            { name: "Senn Ekartörü", img: "sennekartoru.jpg", desc: "El ve mikro cerrahide kullanılan; bir ucu tırmık, diğer ucu 'L' formunda narin çift taraflı ekartör." },
+            { name: "Simpson Uterin Sond", img: "simpsonuterinsond.jpg", desc: "Jinekolojide rahim derinliğini ölçmek için kullanılan santimetre işaretli, bükülebilir metal kılavuz." },
+            { name: "Sims Uterin Küret", img: "simsuterinkuret.jpg", desc: "Rahim içi doku örneği almak veya kazıma işlemleri için kullanılan halka uçlu keskin cerrahi alet." },
+            { name: "Sisson Sinir Ekartörü", img: "sissonsinirekartoru.jpg", desc: "Nöroşirürjide sinir köklerini ekarte etmek için kullanılan son derece ince uçlu narin alet." },
+            { name: "Slender Pederson Spekulum", img: "slenderpedersonvajinalspekulum.jpg", desc: "Çok dar vajinal yapılarda muayene ve operasyon kolaylığı sağlayan ince bıçaklı spekulum." },
+            { name: "Solvay Spay Hook", img: "solvayspayhook.jpg", desc: "Özellikle uterus yapılarını yakalayıp yüzeye çekmek için kullanılan çengel uçlu traksiyon aleti." },
+            { name: "Van Buren Üretral Dilatatör", img: "vanburenuretraldilator.jpg", desc: "Erkek üretrasını genişletmek için kullanılan, kendine has eğimli ucu olan metal dilatör." },
+            { name: "Volkmann Tırmık Ekartör", img: "volkmanntirmikekartor.jpg", desc: "Kas ve deri altı dokuları çekmek için kullanılan, keskin veya küt pençe uçlu güçlü manuel ekartör." },
+            { name: "Willauer Deaver Ekartörü", img: "willauerdeaverekartoru.jpg", desc: "Derin kavitelerde dokuları ekarte etmek için kullanılan, sapı daha ergonomik tasarlanmış Deaver modeli." },
+            { name: "Wylie Renal Ven Ekartörü", img: "wylierenalvenekartoru.jpg", desc: "Vasküler cerrahide böbrek venlerini görüşü kapatmadan ekarte etmek için tasarlanmış özel açılı alet." },
+            { name: "Wylie Splanknik Ekartörü", img: "wyliesplanchnicekartoru.jpg", desc: "Derin batın operasyonlarında splanknik sinirleri ve dokuları koruyarak geri çekmek için kullanılan model." }
+        ];
+
+        function initList() {
+            const list = document.getElementById('mainList');
+            ekartorler.sort((a, b) => a.name.localeCompare(b.name, 'tr')).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'product-row';
+                row.onclick = () => openModal(item);
+                row.innerHTML = `<h3>${item.name}</h3><div class="info-badge">i</div>`;
+                list.appendChild(row);
+            });
+        }
+
+        function smartSearch() {
+            let input = document.getElementById('megaSearch').value.toUpperCase();
+            let resultsDiv = document.getElementById('resultsList');
+            let mainList = document.getElementById('mainList');
+            resultsDiv.innerHTML = ''; mainList.style.opacity = (input.length < 2) ? "1" : "0.3";
+            if (input.length < 2) { resultsDiv.style.display = 'none'; return; }
+            let filtered = ekartorler.filter(item => item.name.toUpperCase().includes(input));
+            if (filtered.length > 0) {
+                resultsDiv.style.display = 'block';
+                filtered.forEach(item => {
+                    let div = document.createElement('div');
+                    div.className = 'result-item'; div.innerHTML = item.name;
+                    div.onclick = () => openModal(item); resultsDiv.appendChild(div);
+                });
+            } else { resultsDiv.style.display = 'none'; }
+        }
+
+        function openModal(item) {
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalDesc').innerText = item.desc;
+            document.getElementById('modalImg').src = 'assets/img/' + item.img;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+
+        initList();
+    </script>
+</body>
+</html>

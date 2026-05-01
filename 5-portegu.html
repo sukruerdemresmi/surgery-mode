@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portegüler Katalog | Surgery - Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* TEMEL AYARLAR */
+        * { margin: 0; padding: 0; box-sizing: border-box; text-decoration: none; -webkit-font-smoothing: antialiased; }
+        body, html { height: 100%; width: 100%; font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e3a8a 100%); background-attachment: fixed; color: white; overflow-x: hidden; }
+
+        /* HEADER */
+        .top-header { width: 100%; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.5); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .back-btn { color: #fff; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; }
+
+        /* ANA DÜZEN */
+        .main-layout { display: flex; max-width: 1100px; margin: 30px auto; padding: 0 20px 140px 20px; gap: 30px; }
+
+        /* ARAMA SIDEBAR */
+        .sidebar { flex: 0 0 280px; display: flex; flex-direction: column; gap: 15px; }
+        .search-box { background: rgba(255, 255, 255, 0.1); border: 2px solid #10b981; /* Portegüler için yeşil tema */ border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 10px; }
+        .search-box input { background: transparent; border: none; color: white; width: 100%; outline: none; font-family: inherit; }
+        #resultsList { background: rgba(255, 255, 255, 0.05); border-radius: 15px; overflow: hidden; display: none; border: 1px solid rgba(255, 255, 255, 0.1); max-height: 400px; overflow-y: auto; }
+        .result-item { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.2s; font-size: 0.8rem; }
+        .result-item:hover { background: rgba(16, 185, 129, 0.2); }
+
+        /* LİSTE ALANI */
+        .content-area { flex: 1; }
+        .list-card { background: rgba(255, 255, 255, 0.05); border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.1); overflow: hidden; }
+        .product-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.3s; }
+        .product-row:hover { background: rgba(255, 255, 255, 0.08); }
+        .product-row h3 { font-size: 0.9rem; font-weight: 600; }
+        .info-badge { width: 22px; height: 22px; background: rgba(16, 185, 129, 0.2); color: #10b981; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: 800; }
+
+        /* DEV POP-UP (MODAL) SİSTEMİ */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.92); backdrop-filter: blur(20px); 
+            display: none; justify-content: center; align-items: center; 
+            z-index: 1000; padding: 15px;
+        }
+
+        .modal-content { 
+            background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.2); 
+            width: 95%; max-width: 900px; /* GENİŞ POP-UP */
+            max-height: 90vh; border-radius: 40px; padding: 40px; 
+            text-align: center; position: relative; overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content img { 
+            width: 100%; max-width: 750px; background: white; 
+            border-radius: 25px; padding: 20px; margin-bottom: 25px; 
+            max-height: 450px; object-fit: contain; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-content h2 { color: #10b981; margin-bottom: 15px; font-size: 1.8rem; font-weight: 800; text-transform: uppercase; }
+
+        .modal-content p { 
+            color: #f1f5f9; font-size: 1.1rem; line-height: 1.7; 
+            text-align: left; background: rgba(15, 23, 42, 0.5); 
+            padding: 25px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .close-btn { 
+            margin-top: 30px; padding: 15px 55px; background: #fff; 
+            color: #000; border-radius: 100px; font-weight: 900; 
+            cursor: pointer; display: inline-block; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .close-btn:hover { background: #10b981; color: white; transform: scale(1.05); }
+
+        .nt-footer { position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.85); padding: 15px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
+        .mini-logo { width: 38px; height: 38px; background: #fff; border-radius: 10px; color: #000; display: flex; justify-content: center; align-items: center; font-weight: 800; }
+
+        @media (max-width: 850px) { .main-layout { flex-direction: column; } .sidebar { flex: none; width: 100%; } .modal-content { padding: 25px; } }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <a href="aletler.html" class="back-btn">← GERİ</a>
+        <div style="font-weight: 800; font-size: 0.9rem; letter-spacing: 1px;">PORTEGÜLER</div>
+        <div style="width: 40px;"></div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="megaSearch" onkeyup="smartSearch()" placeholder="Portegü veya iğne ara...">
+            </div>
+            <div id="resultsList"></div>
+        </aside>
+
+        <main class="content-area">
+            <div class="list-card" id="mainList"></div>
+        </main>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modalImg" src="" alt="">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDesc"></p>
+            <div class="close-btn" onclick="closeModal()">KAPAT</div>
+        </div>
+    </div>
+
+    <div class="nt-footer">
+        <div class="mini-logo">NT</div>
+        <p style="font-size:0.55rem; color:#888; margin-top:5px;">Şükrü ERDEM © 2026</p>
+    </div>
+
+    <script>
+        const porteguler = [
+            { name: "Barraquer Mikro Portegü", img: "barraquermikroportegu.jpg", desc: "Oftalmoloji ve mikrocerrahide kullanılan, son derece narin iğneleri tutmak için tasarlanmış yaylı mekanizmalı hassas portegü." },
+            { name: "Baumgartner Bulldog Portegü", img: "baumgartnerbulldogportegu.jpg", desc: "Kısa ve güçlü çeneleriyle küçük cerrahi iğneleri kaydırmadan tutmak için tasarlanmış kompakt ve dayanıklı model." },
+            { name: "Baumgartner Portegü", img: "baumgartnerportegu.jpg", desc: "Standart cerrahi süturlarda kullanılan, tırtıklı iç yüzeyi ve iğne yuvası ile güvenilir tutuş sağlayan klasik portegü." },
+            { name: "Castroviejo Mikro Portegü", img: "castroviejomikroportegu.jpg", desc: "Plastik ve vasküler cerrahide altın standart. İnce bilek hareketlerine izin veren ergonomik yaylı yapı. Kilitli mekanizmaya sahiptir." },
+            { name: "Gillies Portegü-Makas", img: "gilliesportegumakas.jpg", desc: "İğne tutma ve dikiş ipi kesme özelliğini tek bir alette birleştiren, asimetrik sap yapısına sahip fonksiyonel cerrahi enstrüman." },
+            { name: "Gregory Stay Klemp Portegü", img: "gregorystayklempportegu.jpg", desc: "Vasküler cerrahide askı dikişlerini veya ince sütur materyallerini stabilize etmek için tasarlanmış özel uçlu portegü." },
+            { name: "Heaney Portegü", img: "heaneyportegu.jpg", desc: "Jinekolojik cerrahide, özellikle derin ve dar pelvik alanlarda iğneye hakim olmak için tasarlanmış kavisli ve güçlü yapılı portegü." },
+            { name: "Litvak-Pereyra Ligatür İğnesi", img: "litvakpereyraligaturignesi.jpg", desc: "Ürolojik ve jinekolojik askı operasyonlarında dikiş materyalini derin doku katmanlarından geçirmek için kullanılan kılavuz alet." },
+            { name: "Microvascular Portegü", img: "microvasculeryuvarlaksaplıportegu.jpg", desc: "Mikrocerrahide parmaklar arasında döndürülerek en hassas açılarda dikiş atmayı sağlayan yuvarlak saplı ergonomik tasarım." },
+            { name: "Stamey İğnesi", img: "stameyignesi.jpg", desc: "Ürolojide mesane boynu suspansiyon operasyonları için kullanılan, ucu delikli, uzun ve yüksek dayanımlı iğne kılavuzu." },
+            { name: "Standart Portegü", img: "standartportegu.jpg", desc: "Genel cerrahi prosedürlerinde her türlü iğne boyutuna uygun, tırtıklı çene yapısına sahip temel dikiş aleti." },
+            { name: "Stratte Portegü", img: "stratteportegu.jpg", desc: "Derin kavitelerde iğneyi en zor açılarda bile güvenle tutabilmek için uç kısmı 'S' şeklinde kavisli tasarlanmış özel portegü." }
+        ];
+
+        function initList() {
+            const list = document.getElementById('mainList');
+            porteguler.sort((a, b) => a.name.localeCompare(b.name)).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'product-row';
+                row.onclick = () => openModal(item);
+                row.innerHTML = `<h3>${item.name}</h3><div class="info-badge">i</div>`;
+                list.appendChild(row);
+            });
+        }
+
+        function smartSearch() {
+            let input = document.getElementById('megaSearch').value.toUpperCase();
+            let resultsDiv = document.getElementById('resultsList');
+            let mainList = document.getElementById('mainList');
+            resultsDiv.innerHTML = ''; mainList.style.opacity = (input.length < 2) ? "1" : "0.3";
+            if (input.length < 2) { resultsDiv.style.display = 'none'; return; }
+            let filtered = porteguler.filter(item => item.name.toUpperCase().includes(input));
+            if (filtered.length > 0) {
+                resultsDiv.style.display = 'block';
+                filtered.forEach(item => {
+                    let div = document.createElement('div');
+                    div.className = 'result-item'; div.innerHTML = item.name;
+                    div.onclick = () => openModal(item); resultsDiv.appendChild(div);
+                });
+            } else { resultsDiv.style.display = 'none'; }
+        }
+
+        function openModal(item) {
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalDesc').innerText = item.desc;
+            document.getElementById('modalImg').src = 'assets/img/' + item.img;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+
+        initList();
+    </script>
+</body>
+</html>
