@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sterilizasyon ve Kurallar | Surgery Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --medical-blue: #00d4ff;
+            --bg-dark: #0a0e14;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-main: #e6edf3;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+        }
+
+        header {
+            padding: 60px 20px;
+            text-align: center;
+            background: linear-gradient(to bottom, #161b22, var(--bg-dark));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 8px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .nav-home-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--medical-blue);
+            text-decoration: none;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .nav-home-btn:hover { background: var(--medical-blue); color: #000; }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        /* TIKLANABİLİR KART STİLİ */
+        .rule-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .rule-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .rule-card:hover {
+            transform: scale(1.05);
+            border-color: var(--medical-blue);
+            background: rgba(0, 212, 255, 0.05);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .rule-card h3 {
+            color: var(--medical-blue);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            font-size: 0.8rem;
+            color: #484f58;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="nav-home-btn">🏠 ANA SAYFA</a>
+    <div class="main-title">SURGERY MODE</div>
+    <p style="color: var(--medical-blue); letter-spacing: 2px; margin-top: 10px;">STERİLİZASYON VE PROTOKOLLER</p>
+</header>
+
+<div class="container">
+    <!-- 1. Ameliyathane nedir? -->
+    <a href="nedir.html" class="rule-link">
+        <div class="rule-card">
+            <span class="icon">🏥</span>
+            <h3>Ameliyathane Nedir?</h3>
+            <p>Hastalara cerrahi girişimlerin yapıldığı, enfeksiyon riskinin minimize edildiği, ileri teknoloji ile donatılmış kontrollü alanlardır.</p>
+        </div>
+    </a>
+
+    <!-- 2. Giriş - Çıkış kuralları -->
+    <a href="giris-cikis.html" class="rule-link">
+        <div class="rule-card">
+            <span class="icon">🚪</span>
+            <h3>Giriş - Çıkış Kuralları</h3>
+            <p>Personel sadece belirlenen steril alan geçiş noktalarını kullanmalı, dışarı kıyafetleri ile kırmızı çizgi asla geçilmemelidir.</p>
+        </div>
+    </a>
+
+    <!-- 3. Ameliyat Odası Planı -->
+    <a href="oda-plani.html" class="rule-link">
+        <div class="rule-card">
+            <span class="icon">📐</span>
+            <h3>Ameliyat Odası Planı</h3>
+            <p>Hava akımı (Laminer flow), ısı (18-22°C) ve nem (%30-60) değerleri sürekli kontrol altında tutulan dairesel veya kare mimari yapılardır.</p>
+        </div>
+    </a>
+
+    <!-- 4. Ameliyat Odası Kuralları -->
+    <a href="oda-kurallari.html" class="rule-link">
+        <div class="rule-card">
+            <span class="icon">🛡️</span>
+            <h3>Ameliyat Odası Kuralları</h3>
+            <p>Gereksiz hareket ve konuşmadan kaçınılmalı, kapılar her zaman kapalı tutulmalı ve steril saha korunmalıdır.</p>
+        </div>
+    </a>
+
+    <!-- 5. Preoperatif Kurallar -->
+    <a href="preop.html" class="rule-link">
+        <div class="rule-card">
+            <span class="icon">📋</span>
+            <h3>Preoperatif Kurallar</h3>
+            <p>Hastanın kimlik doğrulaması, cerrahi taraf işaretlemesi ve anestezi öncesi son kontrollerin eksiksiz yapılması safhasıdır.</p>
+        </div>
+    </a>
+
+    <!-- 6. İntraoperatif Kurallar -->
+    <a href="intraop.html" class="rule-link">
+        <div class="rule-card">
+            <span class="icon">✂️</span>
+            <h3>İntraoperatif Kurallar</h3>
+            <p>Cerrahi işlem sırasında sterilite zincirinin bozulmaması, malzeme sayımı ve hemostaz kontrolünün titizlikle yürütülmesidir.</p>
+        </div>
+    </a>
+
+    <!-- 7. Postoperatif Kurallar -->
+    <a href="postop.html" class="rule-link">
+        <div class="rule-card">
+            <span class="icon">🔄</span>
+            <h3>Postoperatif Kurallar</h3>
+            <p>Cerrahi sahanın kapatılması, hastanın uyanma odasına güvenli nakli ve kullanılan aletlerin dekontaminasyon sürecidir.</p>
+        </div>
+    </a>
+
+    <!-- 8. Sterilizasyon Aşamaları -->
+    <a href="sterilizasyon-asamalari.html" class="rule-link">
+        <div class="rule-card">
+            <span class="icon">🧼</span>
+            <h3>Sterilizasyon Aşamaları</h3>
+            <p>Ön temizlik, yıkama, paketleme, otoklav (sterilizasyon) ve depolama süreçlerini kapsayan hayati döngüdür.</p>
+        </div>
+    </a>
+</div>
+
+<footer>
+    SAYFANIN TÜM HAKLARI ŞÜKRÜ ERDEM'E AİTTİR. ©2026
+</footer>
+
+</body>
+</html>

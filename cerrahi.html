@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerrahi Mod | Profesyonel Ameliyat Yönetim Sistemi</title>
+    <style>
+        :root {
+            --medical-blue: #00d4ff;
+            --medical-green: #00ff88;
+            --bg-dark: #0a0e14;
+            --panel-bg: #161b22;
+            --text-main: #e6edf3;
+            --border-color: #30363d;
+            --accent-orange: #ffa500;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Yan Menü Tasarımı */
+        nav {
+            width: 320px;
+            background: #0d1117;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .nav-home {
+            padding: 25px 20px;
+            background: linear-gradient(90deg, #161b22 0%, #0d1117 100%);
+            border-bottom: 2px solid var(--medical-blue);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: bold;
+            transition: 0.3s;
+            color: var(--medical-blue);
+            letter-spacing: 1px;
+        }
+
+        .nav-home:hover {
+            background: var(--medical-blue);
+            color: #000;
+        }
+
+        .category {
+            border-bottom: 1px solid #21262d;
+        }
+
+        .category-header {
+            width: 100%;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            text-align: left;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .category-header:hover {
+            background: #161b22;
+        }
+
+        .category-header::after {
+            content: '▼';
+            font-size: 0.7rem;
+            transition: transform 0.3s;
+        }
+
+        .category.active .category-header::after {
+            transform: rotate(180deg);
+        }
+
+        .surgery-list {
+            display: none;
+            background: #010409;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .category.active .surgery-list {
+            display: block;
+        }
+
+        .surgery-item {
+            padding: 12px 40px;
+            font-size: 0.9rem;
+            color: #8b949e;
+            cursor: pointer;
+            transition: 0.2s;
+            border-bottom: 1px solid #161b22;
+        }
+
+        .surgery-item:hover {
+            color: var(--medical-green);
+            background: rgba(0, 255, 136, 0.05);
+            padding-left: 45px;
+        }
+
+        /* Ana İçerik Alanı */
+        main {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, #161b22 0%, #0a0e14 100%);
+        }
+
+        .content-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .surgery-header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--medical-blue);
+            padding-bottom: 15px;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        h2 { color: var(--medical-blue); margin: 0; }
+        h3 { color: var(--medical-green); font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 0; }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #21262d;
+            font-size: 0.95rem;
+        }
+
+        .qty { color: var(--accent-orange); font-weight: bold; }
+
+        .step-box {
+            border-left: 3px solid var(--medical-blue);
+            padding-left: 20px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .step-title { 
+            font-weight: bold; 
+            color: var(--medical-blue); 
+            display: block; 
+            margin-bottom: 8px; 
+            font-size: 1.1rem;
+        }
+
+        .step-desc {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #bdc5ce;
+        }
+
+        #welcome-screen {
+            text-align: center;
+            margin-top: 100px;
+            color: #484f58;
+        }
+
+        #welcome-screen h1 { font-size: 4rem; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-home" onclick="goHome()">
+        <span>🏠</span>
+        <span>ANA SAYFA</span>
+    </div>
+    
+    <div class="category">
+        <button class="category-header" onclick="toggleCategory(this)">AÇIK CERRAHİ</button>
+        <ul class="surgery-list">
+            <li class="surgery-item" onclick="loadSurgery('appendektomi')">Açık Appendektomi</li>
+            <li class="surgery-item">Inguinal Herni</li>
+            <li class="surgery-item">Tiroidektomi</li>
+        </ul>
+    </div>
+
+    <div class="category">
+        <button class="category-header" onclick="toggleCategory(this)">LAPAROSKOPİK CERRAHİ</button>
+        <ul class="surgery-list">
+            <li class="surgery-item" onclick="loadSurgery('lap_kolesistektomi')">Lap. Kolesistektomi</li>
+            <li class="surgery-item">Lap. Appendektomi</li>
+            <li class="surgery-item">Lap. Herni Onarımı</li>
+        </ul>
+    </div>
+
+    <div class="category">
+        <button class="category-header" onclick="toggleCategory(this)">ENDOCERRAHİ</button>
+        <ul class="surgery-list">
+            <li class="surgery-item">Sistoskopi</li>
+            <li class="surgery-item">ERCP</li>
+        </ul>
+    </div>
+
+    <div class="category">
+        <button class="category-header" onclick="toggleCategory(this)">ROBOTİK CERRAHİ</button>
+        <ul class="surgery-list">
+            <li class="surgery-item">Robotik Prostatektomi</li>
+        </ul>
+    </div>
+
+    <div class="category">
+        <button class="category-header" onclick="toggleCategory(this)">GİRİŞİMSEL CERRAHİ</button>
+        <ul class="surgery-list">
+            <li class="surgery-item">Anjiyografi</li>
+        </ul>
+    </div>
+</nav>
+
+<main id="main-content">
+    <div id="welcome-screen">
+        <h1>⚕️</h1>
+        <h2>CERRAHİ YÖNETİM SİSTEMİ</h2>
+        <p>Lütfen işlem yapmak istediğiniz ameliyat modülünü seçiniz.</p>
+    </div>
+</main>
+
+<script>
+    function toggleCategory(btn) {
+        const parent = btn.parentElement;
+        parent.classList.toggle('active');
+    }
+
+    // ANA SAYFAYA YÖNLENDİRME FONKSİYONU
+    function goHome() {
+        window.location.href = 'index.html';
+    }
+
+    const surgeryData = {
+        'appendektomi': {
+            title: 'Açık Appendektomi Operasyon Protokolü',
+            containers: [
+                { name: 'Genel Cerrahi Seti (Küçük)', qty: '1 Konteyner' },
+                { name: 'Yumuşak Doku Seti', qty: 'Yedek' },
+                { name: 'Steril Önlük ve Örtü Seti', qty: '1 Set' }
+            ],
+            supplies: [
+                { name: 'Koter Kalemi', qty: '1 Adet' },
+                { name: 'Bistüri Ucu (No:15)', qty: '1 Adet' },
+                { name: 'Bistüri Ucu (No:10/20)', qty: '1 Adet' },
+                { name: 'Batın Kompres (5\'li)', qty: '2 Paket' },
+                { name: 'Radyopaklı Spanç (10\'lu)', qty: '2 Paket' },
+                { name: '2/0 İpek (Free)', qty: '1 Adet' },
+                { name: '2/0 Vicryl (Yuvarlak)', qty: '1 Adet' },
+                { name: '2/0 Rapid/Fast Vicryl (Keskin)', qty: '1 Adet' }
+            ],
+            steps: [
+                { t: 'Hazırlık ve Boyama', d: 'Saha povidon-iyot ile boyanır. Steril örtü seti ile cerrahi alan sınırlandırılır. Koter ve aspiratör masaya sabitlenir.' },
+                { t: 'Cilt ve Cilt Altı İnsizyonu', d: '20 no bistüri ile McBurney insizyonu yapılır. Koter ile cilt altı dokular geçilerek Scarpa fasyasına ulaşılır.' },
+                { t: 'Fasya ve Kas Geçişi', d: 'Eksternal oblik fasyası keskin, iç kas tabakaları künt diseksiyonla ayrılır. Roux ekartörlerle saha genişletilir.' },
+                { t: 'Periton Açılışı', d: 'Periton pensetle kaldırılıp bistüri ile küçük bir delik açılır, makasla genişletilir.' },
+                { t: 'Apendiks Rezeksiyonu', d: 'Apendiks Bebcock ile tutulur. Mezosu ipek ile bağlanıp kesilir. Kök 2/0 Vicryl ile bağlanıp rezeke edilir.' },
+                { t: 'Kapatma', d: 'Sayım kontrolü yapılır. Periton, fasya ve cilt katmanları uygun süturlarla anatomik olarak kapatılır.' }
+            ]
+        },
+        'lap_kolesistektomi': {
+            title: 'Laparoskopik Kolesistektomi Safhaları',
+            containers: [
+                { name: 'Laparoskopi Kamera & Işık Seti', qty: '1 Set' },
+                { name: 'Laparoskopik El Aletleri Seti', qty: '1 Konteyner' }
+            ],
+            supplies: [
+                { name: 'Veress İğnesi', qty: '1 Adet' },
+                { name: '10mm Trokar', qty: '2 Adet' },
+                { name: '5mm Trokar', qty: '2 Adet' },
+                { name: 'Laparoskopik Monopolar Hook', qty: '1 Adet' },
+                { name: 'Lap. Grasper', qty: '1 Adet' },
+                { name: 'Lap Clinch(Dişli Grasper)', qty: '1 Adet' },
+                { name: 'Mary-Land Dissektör', qty: '1 Adet' },
+                { name: 'Makas', qty: '1 adet'},
+                { name: 'Endo-Clip (Medium/Large)', qty: '1 Adet' },
+                { name: '1 NO Vicrily + 1 NO ipek + 2/0 Prolen', qty: '1/1/1 adet'},
+                { name: 'Radyopak Xray Silikon Dren', qty: '1 adet'},
+                { name: 'Yıkama-Aspirasyon Seti', qty: '1 Set' }
+            ],
+            steps: [
+                { t: 'Pnömoperitoneum', d: 'Verris iğnesi ile batına girilir, CO2 ile 12-14 mmHg basınçta karın şişirilir.' },
+                { t: 'Port Yerleşimi', d: 'Göbekten 10mm kamera portu, diğer bölgelerden operatif trokarlar (10mm ve 5mm) girilir.' },
+                { t: 'Calot Üçgeni Diseksiyonu', d: 'Sistik kanal ve sistik arter disseke edilerek ortaya çıkarılır (Güvenli görüş).' },
+                { t: 'Klipler ve Kesme', d: 'Kanal ve arter çift klip ile kapatılıp aradan kesilir.' },
+                { t: 'Yataktan Ayırma', d: 'Kanca koter (hook) ile kese karaciğer yatağından ayrılır.' },
+                { t: 'Tahliye ve Sonlandırma', d: 'Kese endobag ile dışarı alınır. Loj yıkanır, kanama kontrolü yapılır ve portlar kapatılır.' }
+            ]
+        }
+    };
+
+    function loadSurgery(key) {
+        const data = surgeryData[key];
+        if(!data) return;
+
+        let html = `
+            <div class="surgery-header">
+                <h2>${data.title}</h2>
+            </div>
+            <div class="grid-layout">
+                <div class="content-card">
+                    <h3>📦 Ana Setler</h3>
+                    ${data.containers.map(i => `<div class="item-row"><span>${i.name}</span><span class="qty">${i.qty}</span></div>`).join('')}
+                </div>
+                <div class="content-card">
+                    <h3>⚡ Sarf Malzemeler</h3>
+                    ${data.supplies.map(i => `<div class="item-row"><span>${i.name}</span><span class="qty">${i.qty}</span></div>`).join('')}
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>⏱️ Operasyon Safhaları</h3>
+                ${data.steps.map((s, index) => `
+                    <div class="step-box">
+                        <span class="step-title">${index + 1}. ${s.t}</span>
+                        <div class="step-desc">${s.d}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        document.getElementById('main-content').innerHTML = html;
+        document.getElementById('main-content').scrollTop = 0;
+    }
+</script>
+
+</body>
+</html>

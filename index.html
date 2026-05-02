@@ -6,38 +6,34 @@
     <title>Surgery - Mode | SURGERY NURSE</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
-    
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             text-decoration: none;
-            -webkit-font-smoothing: antialiased; /* iOS'ta pürüzsüz yazı */
+            -webkit-font-smoothing: antialiased;
         }
 
         body, html {
             height: 100%;
             width: 100%;
             font-family: 'Inter', -apple-system, sans-serif;
-            overflow: hidden; /* Tam ekran, kaydırma yok */
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* CANLI VE HAREKETLİ ARKA PLAN */
         .live-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /* Kendi görselini kullanmak için url'yi 'assets/img/arkaplan.jpg' yap */
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
                         url('assets/img/arkaplan.jpg') no-repeat center center;
             background-size: cover;
             z-index: -1;
-            /* Hafif hareket efekti için */
             animation: bgZoom 15s infinite alternate;
         }
 
@@ -46,29 +42,66 @@
             100% { transform: scale(1.1); }
         }
 
-        /* ANA CAM PANEL (GLASSMORPHISM) */
         .main-glass-panel {
             width: 90%;
             height: 85%;
-            background: rgba(255, 255, 255, 0.05); /* Yarı saydam beyaz */
-            backdrop-filter: blur(25px) saturate(180%); /* Buzlu cam efekti */
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px) saturate(180%);
             -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.1); /* İnce ışık çizgisi */
-            border-radius: 35px; /* iOS tarzı yumuşak köşe */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 35px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            position: relative;
         }
 
-        /* ÜST NAVİGASYON (Görseldeki gibi sağ üstte) */
+        /* ÖZLÜ SÖZLER KONTEYNERI */
+        .quote-container {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 280px;
+            padding: 25px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+        }
+
+        .quote-left { left: 40px; }
+        .quote-right { right: 40px; }
+
+        .quote-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-weight: 300;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .quote-author {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #00d4ff;
+            margin-top: 8px;
+            letter-spacing: 1px;
+        }
+
         .glass-header {
             width: 100%;
             padding: 30px 50px;
             display: flex;
             justify-content: flex-end;
             gap: 40px;
+            z-index: 10;
         }
 
         .nav-link {
@@ -76,143 +109,104 @@
             font-weight: 700;
             font-size: 1.1rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
             transition: color 0.3s;
         }
-        .nav-link:hover {
-            color: rgba(255, 255, 255, 0.6);
+
+        .nav-link:hover { color: rgba(255, 255, 255, 0.6); }
+
+        .bottom-section {
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            z-index: 5;
         }
 
-        /* ALT BUTON GRUBU - Dikey ve Ortalı Hale Getirildi */
-.bottom-section {
-    width: 100%;
-    padding: 20px 40px 40px 40px;
-    display: flex;
-    flex-direction: column; /* Butonları alt alta dizer */
-    justify-content: center;
-    align-items: center; /* Yatayda tam ortalar */
-    gap: 12px; /* Butonlar arası boşluk */
-    flex: 1; /* Orta alanı doldurur */
-}
-
-/* iOS BUTON STİLİ - Genişlik ve Hizalama Sabitlendi */
-.ios-btn {
-    width: 100%;
-    max-width: 280px; /* Butonların çok genişlememesi için limit koyduk */
-    height: 70px; /* Sabit yükseklik daha şık durur */
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 18px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 1rem;
-    line-height: 1.2;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* NT LOGO - Butonların hemen altında şık durması için */
-.logo-badge {
-    width: 75px;
-    height: 75px;
-    background: #ffffff;
-    border-radius: 20px; /* Squircle (iOS ikon) formu */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2rem;
-    font-weight: 800;
-    color: #000000;
-    margin-top: 10px; /* Butonlarla logo arası mesafe */
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-        /* Buton Hover Canlılığı */
-        .ios-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            transform: translateY(-5px);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); /* Parlama */
-        }
-        
-        .ios-btn:active {
-            transform: scale(0.97); /* Tıklandığında iOS tarzı küçülme */
-        }
-
-        /* Ortadaki Canlı Logo (NT) */
-        .logo-badge {
-            width: 90px;
-            height: 90px;
-            background: #ffffff;
-            border-radius: 50%;
+        .ios-btn {
+            width: 100%;
+            max-width: 280px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #000000;
-            box-shadow: 0 5px 15px rgba(255,255,255,0.4); /* Logonun parlaması */
+            text-align: center;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* EN ALT SİYAH BANT (Sıfır Yerleşim) */
+        .ios-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .logo-badge {
+            width: 75px;
+            height: 75px;
+            background: #ffffff;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #000000;
+            margin-top: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
         .black-footer {
             width: 100%;
             background-color: #000000;
             padding: 12px 0;
             text-align: center;
-            margin-top: auto; /*Footer'ı en alta sabitler */
+            z-index: 10;
         }
 
         .black-footer p {
             font-size: 0.75rem;
             color: #ffffff;
-            font-weight: 400;
             letter-spacing: 1px;
         }
 
-        /* MOBİL UYUMLULUK */
-        @media (max-width: 600px) {
-            .main-glass-panel {
-                width: 95%;
-                height: 95%;
-                border-radius: 25px;
-            }
-
-            .glass-header {
-                padding: 20px 10px;
-                gap: 15px;
-            }
-
-            .nav-link {
-                font-size: 0.7rem; /* Mobilde yazılar küçüldü */
-            }
-
-            .stack-section {
-                gap: 10px; /* Butonlar arası boşluk azaldı */
-            }
-
-            .ios-btn {
-                min-height: 55px; /* Buton yüksekliği mobilde azaldı */
-                font-size: 0.85rem; /* Buton yazısı mobilde küçüldü */
-                border-radius: 15px;
-            }
-
-            .logo-badge {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
-                border-radius: 15px;
-            }
-
-            .black-footer {
-                border-bottom-left-radius: 25px;
-                border-bottom-right-radius: 25px;
-            }
+        /* MOBİLDE SÖZLERİ GİZLE */
+        @media (max-width: 1100px) {
+            .quote-container { display: none; }
         }
+
+        .main-title {
+    width: 100%;
+    text-align: center;
+    font-size: 3.5rem; /* Büyük ve etkileyici */
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 12px; /* Harf arası boşluk kurumsal bir hava katar */
+    text-transform: uppercase;
+    margin-top: 20px;
+    margin-bottom: -10px;
+    opacity: 0.9;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2); /* Hafif derinlik efekti */
+    z-index: 5;
+}
+
+/* Mobilde başlığın taşmaması için */
+@media (max-width: 600px) {
+    .main-title {
+        font-size: 1.8rem;
+        letter-spacing: 5px;
+        margin-top: 10px;
+    }
+}
     </style>
 </head>
 <body>
@@ -221,15 +215,29 @@
 
     <div class="main-glass-panel">
         
+        <!-- SOL SÖZ ALANI -->
+        <div id="q-left" class="quote-container quote-left">
+            <p class="quote-text" id="text-left"></p>
+            <span class="quote-author" id="author-left"></span>
+        </div>
+
+        <!-- SAĞ SÖZ ALANI -->
+        <div id="q-right" class="quote-container quote-right">
+            <p class="quote-text" id="text-right"></p>
+            <span class="quote-author" id="author-right"></span>
+        </div>
+
         <header class="glass-header">
             <a href="index.html" class="nav-link">Anasayfa</a>
             <a href="hakkimda.html" class="nav-link">Hakkımda</a>
             <a href="iletisim.html" class="nav-link">İletişim</a>
         </header>
 
+        <div class="main-title">SURGERY MODE</div>
+
         <div class="bottom-section">
+            <a href="sterilizasyon.html" class="ios-btn">Sterilizasyon ve Kurallar<br>MODE</a>
             <a href="cerrahi.html" class="ios-btn">CERRAHİ<br>MODE</a>
-            <a href="laparaskopi.html" class="ios-btn">LAPAROSKOPİ<br>MODE</a>
             <a href="aletler.html" class="ios-btn">ALETLER<br>MODE</a>
             <a href="cihazlar.html" class="ios-btn">CİHAZLAR<br>MODE</a>
 
@@ -241,6 +249,58 @@
         </footer>
 
     </div>
+
+    <script>
+        const quotes = [
+            { t: "“Cerrahi, öğrenilmeden yapılmaz; yapılmadan öğrenilmez.”", a: "René Leriche" },
+            { t: "“Her kesi, bir hayatı geri kazandırmak içindir.”", a: "Prof. Gazi Yaşargil" },
+            { t: "“Sessizlik, sonsuzluğun elementidir. Ameliyathanedeki o gergin sessizlik, insanın doğaya karşı kazandığı zaferin en asil şarkısıdır.”", a: "Thomas Carlyle" },
+            { t: "“Hayatta kalan, en güçlü olan değil, değişime en uyumlu olandır.”", a: "Charles Darwin" },
+            { t: "“Hiçbir şey öğrenemeyeceğim kadar cahil birine hiç rastlamadım.”", a: "Galileo Galilei"},
+            { t: "“Sinek küçük ama steril değildir. Ameliyathanede işi olmaz.”", a: "Şükrü ERDEM"},
+            { t: "“Ameliyathane, insan iradesinin kaderle en organize şekilde kapıştığı arenadır.”", a: "Paul Valéry"},
+            { t: "“Acı da iyi bir duygudur, çünkü incinen kısmın henüz çürümemiş olduğunu gösterir.”", a: "Baruch Spinoza" }
+        ];
+
+        let leftIndex = 0;
+        let rightIndex = 1; // Sağ taraf bir sonraki sözden başlasın
+
+        function updateQuotes() {
+            const qLeft = document.getElementById('q-left');
+            const qRight = document.getElementById('q-right');
+            
+            qLeft.style.opacity = 0;
+            qRight.style.opacity = 0;
+
+            setTimeout(() => {
+                const quoteL = quotes[leftIndex];
+                const quoteR = quotes[rightIndex];
+                
+                // Sol taraf güncelleme
+                document.getElementById('text-left').innerText = quoteL.t;
+                document.getElementById('author-left').innerText = quoteL.a;
+                
+                // Sağ taraf güncelleme
+                document.getElementById('text-right').innerText = quoteR.t;
+                document.getElementById('author-right').innerText = quoteR.a;
+
+                qLeft.style.opacity = 1;
+                qRight.style.opacity = 1;
+
+                // İndeksleri kaydır
+                leftIndex = (leftIndex + 1) % quotes.length;
+                rightIndex = (rightIndex + 1) % quotes.length;
+                
+                // Eğer sol ve sağ aynı söze denk gelirse, sağ tarafı bir kez daha kaydır
+                if(leftIndex === rightIndex) {
+                    rightIndex = (rightIndex + 1) % quotes.length;
+                }
+            }, 1000);
+        }
+
+        updateQuotes();
+        setInterval(updateQuotes, 5000);
+    </script>
 
 </body>
 </html>
